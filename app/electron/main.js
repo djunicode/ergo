@@ -4,13 +4,13 @@ const {
   BrowserWindow,
   session,
   ipcMain,
-  Menu
+  Menu,
 } = require("electron");
 const {
   default: installExtension,
   REDUX_DEVTOOLS,
-  REACT_DEVELOPER_TOOLS
-} = require('electron-devtools-installer');
+  REACT_DEVELOPER_TOOLS,
+} = require("electron-devtools-installer");
 const Protocol = require("./protocol");
 const MenuBuilder = require("./menu");
 const i18nextBackend = require("i18next-electron-fs-backend");
@@ -31,7 +31,7 @@ async function createWindow() {
   if (isDev) {
     await installExtension([REDUX_DEVTOOLS, REACT_DEVELOPER_TOOLS])
       .then((name) => console.log(`Added Extension:  ${name}`))
-      .catch((err) => console.log('An error occurred: ', err));
+      .catch((err) => console.log("An error occurred: ", err));
   } else {
     // Needs to happen before creating/loading the browser window;
     // not necessarily instead of extensions, just using this code block
@@ -40,7 +40,7 @@ async function createWindow() {
   }
 
   const store = new Store({
-    path: app.getPath("userData")
+    path: app.getPath("userData"),
   });
 
   // Use saved config values for configuring your
@@ -62,8 +62,8 @@ async function createWindow() {
       contextIsolation: true,
       enableRemoteModule: false,
       additionalArguments: [`storePath:${app.getPath("userData")}`],
-      preload: path.join(__dirname, "preload.js")
-    }
+      preload: path.join(__dirname, "preload.js"),
+    },
   });
 
   // Sets up main.js bindings for our i18next backend
@@ -72,22 +72,28 @@ async function createWindow() {
   // Sets up main.js bindings for our electron store;
   // callback is optional and allows you to use store in main process
   const callback = function (success, initialStore) {
-    console.log(`${!success ? "Un-s" : "S"}uccessfully retrieved store in main process.`);
+    console.log(
+      `${!success ? "Un-s" : "S"}uccessfully retrieved store in main process.`
+    );
     console.log(initialStore); // {"key1": "value1", ... }
   };
-  
+
   store.mainBindings(ipcMain, win, fs, callback);
 
   // Sets up bindings for our custom context menu
   ContextMenu.mainBindings(ipcMain, win, Menu, isDev, {
-    "loudAlertTemplate": [{
-      id: "loudAlert",
-      label: "AN ALERT!"
-    }],
-    "softAlertTemplate": [{
-      id: "softAlert",
-      label: "Soft alert"
-    }]
+    loudAlertTemplate: [
+      {
+        id: "loudAlert",
+        label: "AN ALERT!",
+      },
+    ],
+    softAlertTemplate: [
+      {
+        id: "softAlert",
+        label: "Soft alert",
+      },
+    ],
   });
 
   // Load app
@@ -99,11 +105,10 @@ async function createWindow() {
 
   // Only do these things when in development
   if (isDev) {
-    
     // Errors are thrown if the dev tools are opened
     // before the DOM is ready
     win.webContents.once("dom-ready", () => {
-      win.webContents.openDevTools();
+      // win.webContents.openDevTools(); // see https://github.com/reZach/secure-electron-template/issues/48
       require("electron-debug")(); // https://github.com/sindresorhus/electron-debug
     });
   }
@@ -154,13 +159,15 @@ async function createWindow() {
 // gives our scheme access to load relative files,
 // as well as local storage, cookies, etc.
 // https://electronjs.org/docs/api/protocol#protocolregisterschemesasprivilegedcustomschemes
-protocol.registerSchemesAsPrivileged([{
-  scheme: Protocol.scheme,
-  privileges: {
-    standard: true,
-    secure: true
-  }
-}]);
+protocol.registerSchemesAsPrivileged([
+  {
+    scheme: Protocol.scheme,
+    privileges: {
+      standard: true,
+      secure: true,
+    },
+  },
+]);
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
@@ -220,14 +227,17 @@ app.on("web-contents-created", (event, contents) => {
   });
 
   // https://electronjs.org/docs/tutorial/security#11-verify-webview-options-before-creation
-  contents.on("will-attach-webview", (contentsEvent, webPreferences, params) => {
-    // Strip away preload scripts if unused or verify their location is legitimate
-    delete webPreferences.preload;
-    delete webPreferences.preloadURL;
+  contents.on(
+    "will-attach-webview",
+    (contentsEvent, webPreferences, params) => {
+      // Strip away preload scripts if unused or verify their location is legitimate
+      delete webPreferences.preload;
+      delete webPreferences.preloadURL;
 
-    // Disable Node.js integration
-    webPreferences.nodeIntegration = false;
-  });
+      // Disable Node.js integration
+      webPreferences.nodeIntegration = false;
+    }
+  );
 
   // https://electronjs.org/docs/tutorial/security#13-disable-or-limit-creation-of-new-windows
   contents.on("new-window", async (contentsEvent, navigationUrl) => {
