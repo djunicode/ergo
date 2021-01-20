@@ -2,7 +2,7 @@ import React from "react";
 import ROUTES from "Constants/routes";
 import { Link } from "react-router-dom";
 import "./welcome.css";
-
+import {MyCmp} from 'Components/subitem/mycmp'; // temporary component to check working of material-ui
 class Welcome extends React.Component {
   render() {
     return (
@@ -10,6 +10,7 @@ class Welcome extends React.Component {
         <h1 className="header">
           Thank you for trying out the secure-electron-template!
         </h1>
+        <MyCmp />
         <div>
           <Link to={ROUTES.MOTD}>View a sample of using the store.</Link><br />
           <Link to={ROUTES.LOCALIZATION}>
