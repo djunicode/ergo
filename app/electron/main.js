@@ -17,6 +17,7 @@ const i18nextBackend = require("i18next-electron-fs-backend");
 const Store = require("secure-electron-store").default;
 const ContextMenu = require("secure-electron-context-menu").default;
 const path = require("path");
+const glob = require('glob');
 const fs = require("fs");
 const isDev = process.env.NODE_ENV === "development";
 const port = 40992; // Hardcoded; needs to match webpack.development.js and package.json
@@ -42,6 +43,16 @@ async function createWindow() {
   const store = new Store({
     path: app.getPath("userData"),
   });
+
+  function loadMainProcess() {
+    const files = glob.sync(path.join(__dirname, 'mainEvents/**/*.js'));
+    files.forEach((file) => require(file));
+  }
+
+  loadMainProcess(); // ran at initialization of app
+
+
+
 
   // Use saved config values for configuring your
   // BrowserWindow, for instance.
