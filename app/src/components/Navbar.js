@@ -11,6 +11,7 @@ import SearchIcon from '@material-ui/icons/Search';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import TextField from '@material-ui/core/TextField'
+import InputBase from '@material-ui/core/InputBase';
 
 const useStyles = makeStyles((theme) => ({
   grow: {
@@ -24,13 +25,15 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor:'#FFA47A',
     [theme.breakpoints.down('sm')]:{
       width:'250px'
-    }
+    },
+    borderRadius:'8px'
   },
   title: {
-    display: 'block',
-    
+    display:'none',
+    marginLeft:'75px',
+    fontWeight:'bold',
     [theme.breakpoints.up('sm')]: {
-      //display: 'block',
+      display: 'block',
       marginRight:'150px',
     },
   },
@@ -55,21 +58,25 @@ const useStyles = makeStyles((theme) => ({
     alignItems: 'center',
     justifyContent: 'center',
   },
+
   inputRoot: {
     color: 'inherit',
   },
+  
   inputInput: {
     padding: theme.spacing(1, 1, 1, 0),
     // vertical padding + font size from searchIcon
     paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
     transition: theme.transitions.create('width'),
     width: '100%',
+    
     [theme.breakpoints.up('md')]: {
       width: '20ch',
     },
   },
   sectionDesktop: {
     display: 'none',
+    marginLeft:'75px',
     [theme.breakpoints.up('md')]: {
       display: 'flex',
     },
@@ -118,6 +125,12 @@ export default function Navbar() {
     backgroundColor:'#FF8761'
   }   // for changing the default color of the Appbar
 
+
+  const NotificationIconStyle={
+   boxShadow:'10px 10px 20px rgba(0, 0, 0, 0.25)',
+  
+  }
+
   return (
     
 
@@ -125,7 +138,10 @@ export default function Navbar() {
    
       <AppBar position="static" style={AppBarStyle}>
         <Toolbar>
-          
+
+          <div>
+            Icon
+          </div>
           <Typography className={classes.title} variant="h6" noWrap>
             Ergo
           </Typography>
@@ -133,11 +149,12 @@ export default function Navbar() {
           
           <div className={classes.search}>
             <div className={classes.searchIcon} style={{marginRight:'30px'}}>
-              <SearchIcon />
+              <SearchIcon  style={{color:'white'}}/>
              </div>
             <div style={{marginLeft:'50px'}}>
               <TextField className={classes.inputText}  type="text" id="outlined-basic" label="search...." variant="outlined"  size="small" />
             </div>
+          
           </div>
 
           <div className={classes.grow} />
@@ -146,7 +163,7 @@ export default function Navbar() {
 
             <IconButton aria-label="show 4 new notifications" color="inherit">
               <Badge badgeContent={4} color="secondary">
-                <NotificationsIcon />
+                <NotificationsIcon style={NotificationIconStyle}/>
               </Badge>
             </IconButton>
 
