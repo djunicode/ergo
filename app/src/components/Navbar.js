@@ -10,8 +10,8 @@ import Menu from '@material-ui/core/Menu';
 import SearchIcon from '@material-ui/icons/Search';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import NotificationsIcon from '@material-ui/icons/Notifications';
-import TextField from '@material-ui/core/TextField'
 import InputBase from '@material-ui/core/InputBase';
+
 
 const useStyles = makeStyles((theme) => ({
   grow: {
@@ -26,7 +26,8 @@ const useStyles = makeStyles((theme) => ({
     [theme.breakpoints.down('sm')]:{
       width:'250px'
     },
-    borderRadius:'8px'
+    borderRadius:'8px',
+    border:'none'
   },
   title: {
     display:'none',
@@ -61,6 +62,12 @@ const useStyles = makeStyles((theme) => ({
 
   inputRoot: {
     color: 'inherit',
+    backgroundColor:'#FFA47A',
+    marginLeft:'95px',
+    width:'400px',
+    [theme.breakpoints.down('sm')]:{
+      width:'250px'
+    }
   },
   
   inputInput: {
@@ -77,6 +84,7 @@ const useStyles = makeStyles((theme) => ({
   sectionDesktop: {
     display: 'none',
     marginLeft:'75px',
+    marginRight:'10px',
     [theme.breakpoints.up('md')]: {
       display: 'flex',
     },
@@ -118,22 +126,24 @@ export default function Navbar() {
     </Menu>
   );
 
- 
 
+
+// some customs Styles
+
+// changing the background color of the appbar
   const AppBarStyle={
     color:'black',
     backgroundColor:'#FF8761'
-  }   // for changing the default color of the Appbar
+  }   
 
-
+ // Giving box shadow to notificationIcons
   const NotificationIconStyle={
    boxShadow:'10px 10px 20px rgba(0, 0, 0, 0.25)',
-  
   }
+
 
   return (
     
-
     <div className={classes.grow}>
    
       <AppBar position="static" style={AppBarStyle}>
@@ -148,14 +158,22 @@ export default function Navbar() {
 
           
           <div className={classes.search}>
-            <div className={classes.searchIcon} style={{marginRight:'30px'}}>
-              <SearchIcon  style={{color:'white'}}/>
-             </div>
-            <div style={{marginLeft:'50px'}}>
-              <TextField className={classes.inputText}  type="text" id="outlined-basic" label="search...." variant="outlined"  size="small" />
-            </div>
-          
+                 <div className={classes.searchIcon}>
+                        <SearchIcon style={{color:'white'}}  />
+                 </div>
+               <InputBase
+                      placeholder="Search…"
+                      classes={{
+                      root: classes.inputRoot,
+                      input: classes.inputInput,
+                        }}
+                      inputProps={{ 'aria-label': 'search' }}
+               />
           </div>
+                     
+              
+                
+          
 
           <div className={classes.grow} />
 
