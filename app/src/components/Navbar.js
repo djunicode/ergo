@@ -136,12 +136,7 @@ export default function Navbar() {
     backgroundColor:'#FF8761'
   }   
 
- // Giving box shadow to notificationIcons
-  const NotificationIconStyle={
-   boxShadow:'10px 10px 20px rgba(0, 0, 0, 0.25)',
-  }
-
-
+    
   return (
     
     <div className={classes.grow}>
@@ -159,7 +154,9 @@ export default function Navbar() {
           
           <div className={classes.search}>
                  <div className={classes.searchIcon}>
+                    <IconButton>
                         <SearchIcon style={{color:'white'}}  />
+                    </IconButton>
                  </div>
                <InputBase
                       placeholder="Search…"
@@ -170,18 +167,14 @@ export default function Navbar() {
                       inputProps={{ 'aria-label': 'search' }}
                />
           </div>
-                     
-              
-                
-          
-
+         
           <div className={classes.grow} />
 
           <div className={classes.sectionDesktop}>
 
             <IconButton aria-label="show 4 new notifications" color="inherit">
               <Badge badgeContent={4} color="secondary">
-                <NotificationsIcon style={NotificationIconStyle}/>
+                <NotificationsIcon />
               </Badge>
             </IconButton>
 
