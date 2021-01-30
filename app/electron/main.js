@@ -22,6 +22,12 @@ const isDev = process.env.NODE_ENV === "development";
 const port = 40992; // Hardcoded; needs to match webpack.development.js and package.json
 const selfHost = `http://localhost:${port}`;
 
+// Setup file logging
+const log = require('electron-log');
+const { info } = require("console");
+log.transports.file.level = 'info';
+log.transports.file.file = __dirname + 'logger.log';
+
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let win;
@@ -30,8 +36,32 @@ let menuBuilder;
 async function createWindow() {
   if (isDev) {
     await installExtension([REDUX_DEVTOOLS, REACT_DEVELOPER_TOOLS])
-      .then((name) => console.log(`Added Extension:  ${name}`))
-      .catch((err) => console.log("An error occurred: ", err));
+      .then((name) => log.info(`Added Extension:  ${name}`))
+      .catch(log.catchErrors({
+        showDialog: true,
+        onError(error, versions, submitIssue) {
+          electron.dialog.showMessageBox({
+            title: 'An error occurred',
+            message: error.message,
+            detail: error.stack,
+            type: 'error',
+            buttons: ['Ignore', 'Report', 'Exit'],
+          })
+            .then((result) => {
+              if (result.response === 1) {
+                submitIssue('https://github.com/djunicode/ergo/issues/new', {
+                  title: `Error report for ${versions.app}`,
+                  body: 'Error:\n```' + error.stack + '\n```\n' + `OS: ${versions.os}`
+                });
+                return;
+              }
+            
+              if (result.response === 2) {
+                electron.app.quit();
+              }
+            });
+        }
+      }))
   } else {
     // Needs to happen before creating/loading the browser window;
     // not necessarily instead of extensions, just using this code block
@@ -72,10 +102,11 @@ async function createWindow() {
   // Sets up main.js bindings for our electron store;
   // callback is optional and allows you to use store in main process
   const callback = function (success, initialStore) {
-    console.log(
+   
+    log.info(
       `${!success ? "Un-s" : "S"}uccessfully retrieved store in main process.`
     );
-    console.log(initialStore); // {"key1": "value1", ... }
+    log.info(initialStore); // {"key1": "value1", ... }
   };
 
   store.mainBindings(ipcMain, win, fs, callback);
@@ -132,9 +163,32 @@ async function createWindow() {
       if (allowedPermissions.includes(permission)) {
         permCallback(true); // Approve permission request
       } else {
-        console.error(
-          `The application tried to request permission for '${permission}'. This permission was not whitelisted and has been blocked.`
-        );
+        log.catchErrors({
+          showDialog: false,
+          onError(error, versions, submitIssue) {
+            electron.dialog.showMessageBox({
+              title: 'An error occurred',
+              message:"The application tried to request permission for '${permission}' This permission was not whitelisted and has been blocked.",
+              detail: error.stack,
+              type: 'error',
+              buttons: ['Ignore', 'Report', 'Exit'],
+            })
+              .then((result) => {
+                if (result.response === 1) {
+                  submitIssue('https://github.com/djunicode/ergo/issues/new', {
+                    title: `Permission issue for ${versions.app}`,
+                    body: 'Error:\n```' + error.stack + '\n```\n' + `OS: ${versions.os}`
+                  });
+                  return;
+                }
+              
+                if (result.response === 2) {
+                  electron.app.quit();
+                }
+              });
+          }
+        });
+        
 
         permCallback(false); // Deny
       }
@@ -202,7 +256,7 @@ app.on("web-contents-created", (event, contents) => {
 
     // Log and prevent the app from navigating to a new page if that page's origin is not whitelisted
     if (!validOrigins.includes(parsedUrl.origin)) {
-      console.error(
+      log.error(
         `The application tried to redirect to the following address: '${parsedUrl}'. This origin is not whitelisted and the attempt to navigate was blocked.`
       );
 
@@ -217,7 +271,7 @@ app.on("web-contents-created", (event, contents) => {
 
     // Log and prevent the app from redirecting to a new page
     if (!validOrigins.includes(parsedUrl.origin)) {
-      console.error(
+      log.error(
         `The application tried to redirect to the following address: '${navigationUrl}'. This attempt was blocked.`
       );
 
@@ -242,7 +296,7 @@ app.on("web-contents-created", (event, contents) => {
   // https://electronjs.org/docs/tutorial/security#13-disable-or-limit-creation-of-new-windows
   contents.on("new-window", async (contentsEvent, navigationUrl) => {
     // Log and prevent opening up a new window
-    console.error(
+    log.error(
       `The application tried to open a new window at the following address: '${navigationUrl}'. This attempt was blocked.`
     );
 

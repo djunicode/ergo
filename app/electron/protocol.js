@@ -23,7 +23,7 @@ const path = require("path");
 
 const DIST_PATH = path.join(__dirname, "../../app/dist");
 const scheme = "app";
-
+const log=require("electron-log")
 const mimeTypes = {
   ".js": "text/javascript",
   ".mjs": "text/javascript",
@@ -65,7 +65,7 @@ function requestHandler(req, next) {
         data: data
       });
     } else {
-      console.error(err);
+      log.error(err);
     }
   });
 }
