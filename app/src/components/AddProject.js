@@ -16,7 +16,7 @@ const useStyles=makeStyles(theme=>({
         border:'10px solid #79B8D1',
         borderRadius:'8px',
         marginTop:'5px',
-        maxHeight:'159px',
+        maxHeight:'120px',
         filter:'drop-shadow(0px 15px 60px rgba(0, 0, 0, 0.1))',
         display:'flex',
         flexDirection:'column',
@@ -49,7 +49,7 @@ const useStyles=makeStyles(theme=>({
           fontSize:'18px',
           fontWeight:'bold',
           textAlign:'center',   
-          marginTop:'-10%'
+          marginTop:'-15%'
       }
 }));
 
