@@ -8,10 +8,11 @@ import CardActions from '@material-ui/core/CardActions'
 const useStyles=makeStyles(theme=>({
     root:{
         border:'2px solid #F4976C',
-        maxWidth:'300px',
-        marginTop:'10px',
-        borderRadius:'8px',
+        marginTop:'30px',
+        marginBottom:'10px',
+        borderRadius:'10px',
         filter:'drop-shadow(0px 15px 60px rgba(0, 0, 0, 0.1))',
+        width:'350px',
     },
     cardTitle:{
         fontWeight:'bold',
@@ -28,6 +29,7 @@ const useStyles=makeStyles(theme=>({
     },
     cardAction:{
         maxHeight:'15px',
+        height:'43px',
         color:'white',
         backgroundColor:'#F4976C',
         display:'flex',
