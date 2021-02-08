@@ -11,8 +11,7 @@ import './css/index.css'
 ReactDOM.render(
   <div>
   <I18nextProvider i18n={i18n}>
-    <Suspense fallback="loading">
-      
+    <Suspense fallback="loading">     
        <App />
     </Suspense>
   </I18nextProvider>

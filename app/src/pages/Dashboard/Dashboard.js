@@ -1,7 +1,7 @@
 import React from 'react'
-import Navbar from '../../Navbar/Navbar';
-import AddProject from '../../components/AddProject'
-import RecentProjects from '../../components/RecentProjects'
+import Navbar from './Navbar/Navbar';
+import AddProject from './AddProject'
+import RecentProjects from './RecentProjects'
 function Dashboard() {
     return (
         <div>

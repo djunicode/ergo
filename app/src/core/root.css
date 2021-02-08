@@ -10,4 +10,5 @@ body {
 
  #target {
   height: -webkit-fill-available;
+  width:100%;
 }
