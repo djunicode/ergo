@@ -13,6 +13,9 @@ const useStyles=makeStyles(theme=>({
         borderRadius:'10px',
         filter:'drop-shadow(0px 15px 60px rgba(0, 0, 0, 0.1))',
         width:'350px',
+        [theme.breakpoints.between('sm','md')]:{
+            width:'300px'
+        }
     },
     cardTitle:{
         fontWeight:'bold',
@@ -40,7 +43,7 @@ const useStyles=makeStyles(theme=>({
 function IndividualRecentProject({project}) {
     const classes=useStyles();
     return (
-     <Grid item xs={12} md={4} sm={6} >
+     <Grid item xs={12} sm={6} md={4} >
          <Card className={classes.root}>
             <CardContent>
                  <Typography className={classes.cardTitle}>
