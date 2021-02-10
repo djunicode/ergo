@@ -1,32 +1,37 @@
+/* eslint-disable prettier/prettier */
 const {
   app,
   protocol,
+  // eslint-disable-next-line prettier/prettier
   BrowserWindow,
   session,
   ipcMain,
   Menu,
+  dialog,
 } = require("electron");
 const {
   default: installExtension,
   REDUX_DEVTOOLS,
   REACT_DEVELOPER_TOOLS,
 } = require("electron-devtools-installer");
-const Protocol = require("./protocol");
-const MenuBuilder = require("./menu");
 const i18nextBackend = require("i18next-electron-fs-backend");
 const Store = require("secure-electron-store").default;
 const ContextMenu = require("secure-electron-context-menu").default;
 const path = require("path");
 const fs = require("fs");
+const log = require("electron-log");
+
+const Protocol = require("./protocol");
+const MenuBuilder = require("./menu");
+
 const isDev = process.env.NODE_ENV === "development";
 const port = 40992; // Hardcoded; needs to match webpack.development.js and package.json
 const selfHost = `http://localhost:${port}`;
 
 // Setup file logging
-const log = require('electron-log');
-const { info } = require("console");
-log.transports.file.level = 'info';
-log.transports.file.file = __dirname + 'logger.log';
+
+log.transports.file.level = "info";
+log.transports.file.file = `${__dirname}logger.log`;
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -37,31 +42,36 @@ async function createWindow() {
   if (isDev) {
     await installExtension([REDUX_DEVTOOLS, REACT_DEVELOPER_TOOLS])
       .then((name) => log.info(`Added Extension:  ${name}`))
-      .catch(log.catchErrors({
-        showDialog: true,
-        onError(error, versions, submitIssue) {
-          electron.dialog.showMessageBox({
-            title: 'An error occurred',
-            message: error.message,
-            detail: error.stack,
-            type: 'error',
-            buttons: ['Ignore', 'Report', 'Exit'],
-          })
-            .then((result) => {
-              if (result.response === 1) {
-                submitIssue('https://github.com/djunicode/ergo/issues/new', {
-                  title: `Error report for ${versions.app}`,
-                  body: 'Error:\n```' + error.stack + '\n```\n' + `OS: ${versions.os}`
-                });
-                return;
-              }
-            
-              if (result.response === 2) {
-                electron.app.quit();
-              }
-            });
-        }
-      }))
+      .catch(
+        log.catchErrors({
+          showDialog: true,
+          onError(error, versions, submitIssue) {
+            dialog
+              .showMessageBox({
+                title: "An error occurred",
+                message: error.message,
+                detail: error.stack,
+                type: "error",
+                buttons: ["Ignore", "Report", "Exit"],
+              })
+              .then((result) => {
+                if (result.response === 1) {
+                  submitIssue("https://github.com/djunicode/ergo/issues/new", {
+                    title: `Error report for ${versions.app}`,
+                    body:
+                      `Error:\n\`\`\`${error.stack}\n\`\`\`\n` +
+                      `OS: ${versions.os}`,
+                  });
+                  return;
+                }
+
+                if (result.response === 2) {
+                  app.quit();
+                }
+              });
+          },
+        })
+      );
   } else {
     // Needs to happen before creating/loading the browser window;
     // not necessarily instead of extensions, just using this code block
@@ -77,7 +87,7 @@ async function createWindow() {
   // BrowserWindow, for instance.
   // NOTE - this config is not passcode protected
   // and stores plaintext values
-  //let savedConfig = store.mainInitialStore(fs);
+  // let savedConfig = store.mainInitialStore(fs);
 
   // Create the browser window.
   win = new BrowserWindow({
@@ -101,8 +111,8 @@ async function createWindow() {
 
   // Sets up main.js bindings for our electron store;
   // callback is optional and allows you to use store in main process
+  // eslint-disable-next-line func-names
   const callback = function (success, initialStore) {
-   
     log.info(
       `${!success ? "Un-s" : "S"}uccessfully retrieved store in main process.`
     );
@@ -140,6 +150,7 @@ async function createWindow() {
     // before the DOM is ready
     win.webContents.once("dom-ready", () => {
       // win.webContents.openDevTools(); // see https://github.com/reZach/secure-electron-template/issues/48
+      // eslint-disable-next-line global-require
       require("electron-debug")(); // https://github.com/sindresorhus/electron-debug
     });
   }
@@ -158,7 +169,7 @@ async function createWindow() {
   ses
     .fromPartition(partition)
     .setPermissionRequestHandler((webContents, permission, permCallback) => {
-      let allowedPermissions = []; // Full list here: https://developer.chrome.com/extensions/declare_permissions#manifest
+      const allowedPermissions = []; // Full list here: https://developer.chrome.com/extensions/declare_permissions#manifest
 
       if (allowedPermissions.includes(permission)) {
         permCallback(true); // Approve permission request
@@ -166,29 +177,32 @@ async function createWindow() {
         log.catchErrors({
           showDialog: false,
           onError(error, versions, submitIssue) {
-            electron.dialog.showMessageBox({
-              title: 'An error occurred',
-              message:"The application tried to request permission for '${permission}' This permission was not whitelisted and has been blocked.",
-              detail: error.stack,
-              type: 'error',
-              buttons: ['Ignore', 'Report', 'Exit'],
-            })
+            dialog
+              .showMessageBox({
+                title: "An error occurred",
+                message:
+                  `The application tried to request permission for '${permission}' This permission was not whitelisted and has been blocked.`,
+                detail: error.stack,
+                type: "error",
+                buttons: ["Ignore", "Report", "Exit"],
+              })
               .then((result) => {
                 if (result.response === 1) {
-                  submitIssue('https://github.com/djunicode/ergo/issues/new', {
+                  submitIssue("https://github.com/djunicode/ergo/issues/new", {
                     title: `Permission issue for ${versions.app}`,
-                    body: 'Error:\n```' + error.stack + '\n```\n' + `OS: ${versions.os}`
+                    body:
+                      `Error:\n\`\`\`${error.stack}\n\`\`\`\n` +
+                      `OS: ${versions.os}`,
                   });
                   return;
                 }
-              
+
                 if (result.response === 2) {
-                  electron.app.quit();
+                  app.quit();
                 }
               });
-          }
+          },
         });
-        
 
         permCallback(false); // Deny
       }
@@ -254,14 +268,19 @@ app.on("web-contents-created", (event, contents) => {
     const parsedUrl = new URL(navigationUrl);
     const validOrigins = [selfHost];
 
-    // Log and prevent the app from navigating to a new page if that page's origin is not whitelisted
+    // Log and prevent the app from navigating to a new page if
+    // that page's origin is not whitelisted
     if (!validOrigins.includes(parsedUrl.origin)) {
       log.error(
         `The application tried to redirect to the following address: '${parsedUrl}'. This origin is not whitelisted and the attempt to navigate was blocked.`
       );
+      /* !TODO LOG
+      console.error(
+    `The application tried to redirect to the following address: '${parsedUrl}'.
+    This origin is not whitelisted and the attempt to navigate was blocked.`
 
-      contentsEvent.preventDefault();
-      return;
+      );
+        */
     }
   });
 
@@ -274,57 +293,66 @@ app.on("web-contents-created", (event, contents) => {
       log.error(
         `The application tried to redirect to the following address: '${navigationUrl}'. This attempt was blocked.`
       );
-
-      contentsEvent.preventDefault();
-      return;
     }
+    /* !TODO LOG
+      console.error(
+    `The application tried to redirect to the following address:
+    '${navigationUrl}'.
+      This attempt was blocked.`
+      );
+      */
+    contentsEvent.preventDefault();
   });
 
   // https://electronjs.org/docs/tutorial/security#11-verify-webview-options-before-creation
-  contents.on(
-    "will-attach-webview",
-    (contentsEvent, webPreferences, params) => {
-      // Strip away preload scripts if unused or verify their location is legitimate
-      delete webPreferences.preload;
-      delete webPreferences.preloadURL;
+  contents.on("will-attach-webview", (contentsEvent, webPreferences) => {
+    // Strip away preload scripts if unused or
+    // verify their location is legitimate
+    delete webPreferences.preload;
+    delete webPreferences.preloadURL;
 
-      // Disable Node.js integration
-      webPreferences.nodeIntegration = false;
-    }
-  );
+    // Disable Node.js integration
+    webPreferences.nodeIntegration = false;
+  });
 
   // https://electronjs.org/docs/tutorial/security#13-disable-or-limit-creation-of-new-windows
-  contents.on("new-window", async (contentsEvent, navigationUrl) => {
+  contents.on("new-window", (contentsEvent,navigationUrl ) => {
     // Log and prevent opening up a new window
+
     log.error(
       `The application tried to open a new window at the following address: '${navigationUrl}'. This attempt was blocked.`
-    );
 
+      /* !TODO LOG
+    console.error(
+      `The application tried to open a new window at the following address:
+       '${navigationUrl}'. This attempt was blocked.`
+
+      */
+    );
     contentsEvent.preventDefault();
-    return;
   });
 });
 
 // Filter loading any module via remote;
 // you shouldn't be using remote at all, though
 // https://electronjs.org/docs/tutorial/security#16-filter-the-remote-module
-app.on("remote-require", (event, webContents, moduleName) => {
+app.on("remote-require", (event) => {
   event.preventDefault();
 });
 
 // built-ins are modules such as "app"
-app.on("remote-get-builtin", (event, webContents, moduleName) => {
+app.on("remote-get-builtin", (event) => {
   event.preventDefault();
 });
 
-app.on("remote-get-global", (event, webContents, globalName) => {
+app.on("remote-get-global", (event) => {
   event.preventDefault();
 });
 
-app.on("remote-get-current-window", (event, webContents) => {
+app.on("remote-get-current-window", (event) => {
   event.preventDefault();
 });
 
-app.on("remote-get-current-web-contents", (event, webContents) => {
+app.on("remote-get-current-web-contents", (event) => {
   event.preventDefault();
 });

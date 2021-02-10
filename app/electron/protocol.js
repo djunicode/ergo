@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 /*
   Reasonably Secure Electron
   Copyright (C) 2019  Bishop Fox
@@ -11,7 +12,7 @@
   GNU General Public License for more details.
   You should have received a copy of the GNU General Public License
   along with this program; if not, write to the Free Software
-  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+  Foundation, Inc., 51 Franklin Street, Fifth Floor,Boston, MA 02110-1301, USA.
 -------------------------------------------------------------------------
 Implementing a custom protocol achieves two goals:
   1) Allows us to use ES6 modules/targets for Angular
@@ -23,7 +24,9 @@ const path = require("path");
 
 const DIST_PATH = path.join(__dirname, "../../app/dist");
 const scheme = "app";
+
 const log=require("electron-log")
+
 const mimeTypes = {
   ".js": "text/javascript",
   ".mjs": "text/javascript",
@@ -35,7 +38,7 @@ const mimeTypes = {
   ".ico": "image/vnd.microsoft.icon",
   ".png": "image/png",
   ".jpg": "image/jpeg",
-  ".map": "text/plain"
+  ".map": "text/plain",
 };
 
 function charset(mimeType) {
@@ -46,7 +49,7 @@ function charset(mimeType) {
 
 function mime(filename) {
   const type = mimeTypes[path.extname(`${filename || ""}`).toLowerCase()];
-  return type ? type : null;
+  return type || null;
 }
 
 function requestHandler(req, next) {
@@ -62,15 +65,19 @@ function requestHandler(req, next) {
       next({
         mimeType: mimeType,
         charset: charset(mimeType),
-        data: data
+        data: data,
       });
-    } else {
-      log.error(err);
+    } 
+    else {
+
+      log.error(err)
+    
+
     }
   });
 }
 
 module.exports = {
   scheme,
-  requestHandler
+  requestHandler,
 };
