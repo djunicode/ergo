@@ -44,7 +44,7 @@ async function createWindow() {
     path: app.getPath("userData"),
   });
 
-  function loadMainProcess() {
+  const loadMainProcess = () => {
     const files = glob.sync(path.join(__dirname, 'mainEvents/**/*.js'));
     files.forEach((file) => require(file));
   }
