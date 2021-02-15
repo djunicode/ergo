@@ -7,7 +7,7 @@ const ElectronStore = require("electron-store");
 
 const newElectronStore = new ElectronStore();
 
-const commands = require('./commands');
+const commands = require("./commands");
 
 module.exports = function () {
   // Checking for the Operating System
