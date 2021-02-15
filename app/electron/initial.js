@@ -1,63 +1,23 @@
-// To check inbuilt programs are installed or not
 // Include shelljs to run shell commands in node
 const sh = require("shelljs");
 
-// Include electron-store to store the information in :
-// C:\Users\[USER_NAME]\AppData\Roaming\[APP_NAME]
+// Path of config.json file : C:\Users\[USER_NAME]\AppData\Roaming\[APP_NAME]
+
 const ElectronStore = require("electron-store");
 
 const newElectronStore = new ElectronStore();
 
+const commands = require('./commands');
+
 module.exports = function () {
   // Checking for the Operating System
   if (process.platform === "darwin") {
-    newElectronStore.set("platform.Mac", true);
-    newElectronStore.set("platform.Windows", false);
-    newElectronStore.set("platform.Linux", false);
+    newElectronStore.set("platform", "mac");
   } else if (process.platform === "linux") {
-    newElectronStore.set("platform.Windows", false);
-    newElectronStore.set("platform.Mac", false);
-    newElectronStore.set("platform.Linux", true);
+    newElectronStore.set("platform", "linux");
   } else {
-    newElectronStore.set("platform.Linux", false);
-    newElectronStore.set("platform.Mac", false);
-    newElectronStore.set("platform.Windows", true);
+    newElectronStore.set("platform", "win");
   }
-
-  const commands = [
-    {
-      key: "java",
-      value: "java  -version",
-    },
-    {
-      key: "node",
-      value: "node -v",
-    },
-    {
-      key: "python",
-      value: "py --version",
-    },
-    {
-      key: "conda",
-      value: "conda -V",
-    },
-    {
-      key: "c",
-      value: "gcc --version",
-    },
-    {
-      key: "php",
-      value: "php -v",
-    },
-    {
-      key: "npm",
-      value: "npm -v",
-    },
-    {
-      key: "jupyter-notebook",
-      value: "jupyter-notebook --version",
-    },
-  ];
 
   commands.forEach((command) => {
     sh.exec(command.value, { silent: true }, (code) => {
