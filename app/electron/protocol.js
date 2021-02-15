@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 /*
   Reasonably Secure Electron
   Copyright (C) 2019  Bishop Fox
@@ -25,7 +24,7 @@ const path = require("path");
 const DIST_PATH = path.join(__dirname, "../../app/dist");
 const scheme = "app";
 
-const log=require("electron-log")
+const log = require("electron-log");
 
 const mimeTypes = {
   ".js": "text/javascript",
@@ -67,12 +66,8 @@ function requestHandler(req, next) {
         charset: charset(mimeType),
         data: data,
       });
-    } 
-    else {
-
-      log.error(err)
-    
-
+    } else {
+      log.error(err);
     }
   });
 }

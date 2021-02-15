@@ -1,8 +1,6 @@
-/* eslint-disable prettier/prettier */
 const {
   app,
   protocol,
-  // eslint-disable-next-line prettier/prettier
   BrowserWindow,
   session,
   ipcMain,
@@ -21,22 +19,25 @@ const path = require("path");
 const fs = require("fs");
 const log = require("electron-log");
 
+const electronDebug = require("electron-debug");
 const Protocol = require("./protocol");
 const MenuBuilder = require("./menu");
 
 const isDev = process.env.NODE_ENV === "development";
 const port = 40992; // Hardcoded; needs to match webpack.development.js and package.json
 const selfHost = `http://localhost:${port}`;
-
 // Setup file logging
 
 log.transports.file.level = "info";
-log.transports.file.file = `${__dirname}logger.log`;
+log.transports.file = "logger.log";
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let win;
 let menuBuilder;
+const dateOb = new Date();
+
+const date = `0${dateOb.getDate()}`.slice(-2);
 
 async function createWindow() {
   if (isDev) {
@@ -60,11 +61,11 @@ async function createWindow() {
                     title: `Error report for ${versions.app}`,
                     body:
                       `Error:\n\`\`\`${error.stack}\n\`\`\`\n` +
-                      `OS: ${versions.os}`,
+                      `OS: ${versions.os}` +
+                      `Date:${date}`,
                   });
                   return;
                 }
-
                 if (result.response === 2) {
                   app.quit();
                 }
@@ -78,11 +79,9 @@ async function createWindow() {
     // so I don't have to write another 'if' statement
     protocol.registerBufferProtocol(Protocol.scheme, Protocol.requestHandler);
   }
-
   const store = new Store({
     path: app.getPath("userData"),
   });
-
   // Use saved config values for configuring your
   // BrowserWindow, for instance.
   // NOTE - this config is not passcode protected
@@ -111,12 +110,14 @@ async function createWindow() {
 
   // Sets up main.js bindings for our electron store;
   // callback is optional and allows you to use store in main process
-  // eslint-disable-next-line func-names
-  const callback = function (success, initialStore) {
+  const callback = function callback(success, initialStore) {
     log.info(
       `${!success ? "Un-s" : "S"}uccessfully retrieved store in main process.`
     );
-    log.info(initialStore); // {"key1": "value1", ... }
+    log.info(initialStore);
+    /* {"key1": "value1", ... }
+    Storing the initial store in the main process
+    */
   };
 
   store.mainBindings(ipcMain, win, fs, callback);
@@ -151,7 +152,7 @@ async function createWindow() {
     win.webContents.once("dom-ready", () => {
       // win.webContents.openDevTools(); // see https://github.com/reZach/secure-electron-template/issues/48
       // eslint-disable-next-line global-require
-      require("electron-debug")(); // https://github.com/sindresorhus/electron-debug
+      electronDebug(); // https://github.com/sindresorhus/electron-debug
     });
   }
 
@@ -180,8 +181,7 @@ async function createWindow() {
             dialog
               .showMessageBox({
                 title: "An error occurred",
-                message:
-                  `The application tried to request permission for '${permission}' This permission was not whitelisted and has been blocked.`,
+                message: `The application tried to request permission for '${permission}' This permission was not whitelisted and has been blocked.`,
                 detail: error.stack,
                 type: "error",
                 buttons: ["Ignore", "Report", "Exit"],
@@ -192,7 +192,8 @@ async function createWindow() {
                     title: `Permission issue for ${versions.app}`,
                     body:
                       `Error:\n\`\`\`${error.stack}\n\`\`\`\n` +
-                      `OS: ${versions.os}`,
+                      `OS: ${versions.os}` +
+                      `Date:${date}`,
                   });
                   return;
                 }
@@ -294,13 +295,6 @@ app.on("web-contents-created", (event, contents) => {
         `The application tried to redirect to the following address: '${navigationUrl}'. This attempt was blocked.`
       );
     }
-    /* !TODO LOG
-      console.error(
-    `The application tried to redirect to the following address:
-    '${navigationUrl}'.
-      This attempt was blocked.`
-      );
-      */
     contentsEvent.preventDefault();
   });
 
@@ -316,18 +310,11 @@ app.on("web-contents-created", (event, contents) => {
   });
 
   // https://electronjs.org/docs/tutorial/security#13-disable-or-limit-creation-of-new-windows
-  contents.on("new-window", (contentsEvent,navigationUrl ) => {
+  contents.on("new-window", (contentsEvent, navigationUrl) => {
     // Log and prevent opening up a new window
 
     log.error(
       `The application tried to open a new window at the following address: '${navigationUrl}'. This attempt was blocked.`
-
-      /* !TODO LOG
-    console.error(
-      `The application tried to open a new window at the following address:
-       '${navigationUrl}'. This attempt was blocked.`
-
-      */
     );
     contentsEvent.preventDefault();
   });
