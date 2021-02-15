@@ -16,6 +16,7 @@ const Store = require("secure-electron-store").default;
 const ContextMenu = require("secure-electron-context-menu").default;
 const path = require("path");
 const fs = require("fs");
+const glob = require("glob");
 const Protocol = require("./protocol");
 const MenuBuilder = require("./menu");
 
@@ -41,6 +42,13 @@ async function createWindow() {
     // so I don't have to write another 'if' statement
     protocol.registerBufferProtocol(Protocol.scheme, Protocol.requestHandler);
   }
+  const loadMainProcess = () => {
+    const files = glob.sync(path.join(__dirname, "mainEvents/**/*.js"));
+    /* eslint-disable global-require, import/no-dynamic-require */
+    files.forEach((file) => require(file));
+  };
+
+  loadMainProcess();
 
   const store = new Store({
     path: app.getPath("userData"),
@@ -114,7 +122,8 @@ async function createWindow() {
     // before the DOM is ready
     win.webContents.once("dom-ready", () => {
       // win.webContents.openDevTools(); // see https://github.com/reZach/secure-electron-template/issues/48
-      require("electron-debug")(); // https://github.com/sindresorhus/electron-debug
+      require("electron-debug")(); // eslint-disable-line global-require
+      //  https://github.com/sindresorhus/electron-debug
     });
   }
 

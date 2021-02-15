@@ -3,7 +3,7 @@ const fs = require("fs");
 const i18nextBackend = require("i18next-electron-fs-backend");
 const Store = require("secure-electron-store").default;
 const ContextMenu = require("secure-electron-context-menu").default;
-
+// const api = require("./renderEvents");
 // Create the electron store to be made available in the renderer process
 const store = new Store();
 
