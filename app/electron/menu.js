@@ -195,7 +195,7 @@ const MenuBuilder = (mainWindow, appName) => {
           {
             label: "Learn More",
             click: async () => {
-              const { shell } = require("electron");
+              const { shell } = require("electron"); // eslint-disable-line global-require
               await shell.openExternal("https://electronjs.org");
             },
           },
