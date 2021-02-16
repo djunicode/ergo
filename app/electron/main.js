@@ -16,10 +16,7 @@ const Store = require("secure-electron-store").default;
 const ContextMenu = require("secure-electron-context-menu").default;
 const path = require("path");
 const fs = require("fs");
-<<<<<<< Updated upstream
-=======
 const glob = require("glob");
->>>>>>> Stashed changes
 const Protocol = require("./protocol");
 const MenuBuilder = require("./menu");
 
