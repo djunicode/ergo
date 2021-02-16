@@ -16,6 +16,7 @@
     "dist-linux": "npm run prod-build && electron-builder --linux",
     "dist-windows": "npm run prod-build && electron-builder --windows",
     "dist-all": "npm run prod-build && electron-builder --mac --linux --windows",
+    "test": "mocha",
     "pretty": "prettier --write \"app/electron/**/*.js\"",
     "lint": "eslint \"app/electron/\""
   },
@@ -106,6 +107,7 @@
     "connected-react-router": "^6.8.0",
     "easy-redux-undo": "^1.0.2",
     "electron-devtools-installer": "^3.1.1",
+    "electron-store": "^7.0.1",
     "glob": "^7.1.6",
     "i18next": "^19.8.4",
     "i18next-electron-fs-backend": "^1.3.5",
@@ -120,6 +122,7 @@
     "react-router-dom": "^5.2.0",
     "redux": "^4.0.5",
     "secure-electron-context-menu": "^1.2.2",
-    "secure-electron-store": "^1.3.3"
+    "secure-electron-store": "^1.3.3",
+    "shelljs": "^0.8.4"
   }
 }
