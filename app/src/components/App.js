@@ -10,13 +10,22 @@ let theme = createMuiTheme({
       main: "#FF8761",
     },
     secondary:{
-      main:"#79B8D1",
+      main:"rgb(121, 184, 209)",
+      light:"rgba(121, 184, 209,0.3)",
+      xlight:"rgba(121, 184, 209,0.2)",
     }
   }
   ,
     typography:{
       p:{
         fontFamily: "Open Sans,sans-serif",
+        fontWeight:"300",
+        
+      },
+      pTitle:{
+        fontFamily: "Open Sans,sans-serif",
+        fontWeight:"400",
+        fontSize: 20,
       },
       h1:{
         fontFamily: "Raleway,sans-serif", 
@@ -34,6 +43,7 @@ let theme = createMuiTheme({
       },
       button:{
         fontFamily: "Raleway,sans-serif",
+        textTransform:"capitalize",
       }
     }
 });

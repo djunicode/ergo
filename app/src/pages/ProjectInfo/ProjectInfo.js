@@ -5,6 +5,7 @@ import run from "../../icons/run.svg";
 import edit from "../../icons/edit.svg";
 import del from "../../icons/delete.svg";
 import useStyles from "./ProjectInfoStyles";
+import Actions from "./Actions";
 function ProjectInfo(){
     const classes = useStyles();
     return (
@@ -45,7 +46,9 @@ function ProjectInfo(){
                     </div>
                 </div>
             </div>
+            <Actions />
         </div>
+
         
     );
 }
