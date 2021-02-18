@@ -4,7 +4,7 @@ const useStyles = makeStyles((theme)=>{
     return  {
         projectTitle: {
             ...theme.typography.h2,
-            margin:0,
+            margin:0,            
         },
         projSpecTitle:{
             ...theme.typography.h3,
@@ -15,7 +15,7 @@ const useStyles = makeStyles((theme)=>{
             paddingRight:"1rem",
         },
         titleSection: {
-            margin: "2rem auto 0.2rem auto",
+            margin: "2rem auto 0 auto",
             width: "86%",
             paddingLeft:"1rem",
             paddingRight:"1rem",
@@ -31,12 +31,17 @@ const useStyles = makeStyles((theme)=>{
             backgroundColor: theme.palette.secondary.main,
             height: "1px",
         },
-        iconGroup:{
-            marginTop:"0.6rem",
-        },
         icon: {
-            marginRight:"1rem",
-            width:"30px",
+            "& img":{
+                width:"30px",
+            },
+            padding:"8px",
+            [theme.breakpoints.down("sm")]:{
+                "& img":{
+                    width:"23px",
+                },
+                padding:"7px",
+            }            
         },
         tag:{
             marginRight: "0.7rem",
@@ -53,7 +58,6 @@ const useStyles = makeStyles((theme)=>{
             textAlign:"center",
             marginTop:"1.6rem",
             marginBottom:"1.6rem",
-            
         }    
     }
 });

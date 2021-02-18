@@ -1,6 +1,6 @@
 import React from "react";
 import Navbar from "../../components/Navbar/Navbar";
-import { Grid } from "@material-ui/core";
+import { Grid,IconButton } from "@material-ui/core";
 import run from "../../icons/run.svg";
 import edit from "../../icons/edit.svg";
 import del from "../../icons/delete.svg";
@@ -13,14 +13,20 @@ function ProjectInfo(){
             <Navbar />
             <div className={classes.titleSection}>
                 <Grid container className={classes.padHeaders}>
-                    <Grid item md={10} xs={8} style={{marginBottom:"1rem"}} >
+                    <Grid item md={10} xs={8}  >
                         <h1 className={classes.projectTitle}>Project Ergo</h1>
                     </Grid>
-                    <Grid item md={2} xs={4} className={classes.iconGroup}>
+                    <Grid item md={2} xs={4}>
                         <div style={{float:"right"}}>
-                            <img className={classes.icon} src={run} />
-                            <img className={classes.icon} src={edit} />
-                            <img style={{width:"30px"}} src={del} />
+                            <IconButton className={classes.icon}>
+                            <img  src={run} />
+                            </IconButton>
+                            <IconButton className={classes.icon}>
+                            <img  src={edit} />
+                            </IconButton>
+                            <IconButton className={classes.icon}>
+                            <img src={del} />
+                            </IconButton>
                         </div>
                     </Grid>
                 </Grid>
