@@ -17,11 +17,15 @@ let theme = createMuiTheme({
     typography:{
       p:{
         fontFamily: "Open Sans,sans-serif",
-      },      
+      },
+      h1:{
+        fontFamily: "Raleway,sans-serif", 
+        fontSize: 42,
+      } ,    
       h2:{
         fontFamily: "Raleway,sans-serif", 
         fontWeight: 600,
-        fontSize: 40,
+        fontSize: 35,
       },
       h3:{
         fontFamily: "Raleway,sans-serif", 

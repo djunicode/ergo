@@ -47,6 +47,7 @@ export default function Navbar() {
   const AppBarStyle = {
     color: "black",
     backgroundColor: "#FF8761",
+    width:"100%",
   };
 
   return (
@@ -56,29 +57,26 @@ export default function Navbar() {
           <div>
             <img
               src={ergoIcon}
-              style={{ height: "40px", marginLeft: "30px" }}
+              className={classes.logo}
             />
           </div>
           <Typography className={classes.title}>Ergo</Typography>
-
           <div className={classes.search}>
             <div className={classes.searchIcon}>
-              <IconButton onClick={() => console.log("clicked")}>
+            <IconButton onClick={() => console.log("clicked")}>
                 <SearchIcon style={{ color: "white" }} />
               </IconButton>
             </div>
-
             <InputBase
               placeholder="Search…"
               classes={{
                 root: classes.inputRoot,
                 input: classes.inputInput,
               }}
-              inputProps={{ "aria-label": "search" }}
+              inputProps={{ 'aria-label': 'search' }}
             />
           </div>
-
-          <div className={classes.grow} />
+          <div className={classes.preButtons} />
 
           <div className={classes.sectionDesktop}>
             <IconButton aria-label="show 4 new notifications" color="inherit">
@@ -88,6 +86,7 @@ export default function Navbar() {
             </IconButton>
 
             <IconButton
+            style={{marginRight:"1rem",}}
               edge="end"
               aria-label="account of current user"
               aria-controls={menuId}
