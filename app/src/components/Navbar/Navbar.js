@@ -12,7 +12,7 @@ import NotificationsIcon from "@material-ui/icons/Notifications";
 import InputBase from "@material-ui/core/InputBase";
 import ergoIcon from "../../icons/ergoIcon.png";
 import { useStyles } from "./NavbarStyles";
-
+import StyledLink from "../StyledLink/StyledLink";
 export default function Navbar() {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -55,12 +55,16 @@ export default function Navbar() {
       <AppBar position="static" style={AppBarStyle}>
         <Toolbar>
           <div>
+            <StyledLink to="/">
             <img
               src={ergoIcon}
               className={classes.logo}
             />
+            </StyledLink>
           </div>
-          <Typography className={classes.title}>Ergo</Typography>
+          <StyledLink to="/">
+            <Typography className={classes.title}>Ergo</Typography> 
+          </StyledLink>
           <div className={classes.search}>
             <div className={classes.searchIcon}>
             <IconButton onClick={() => console.log("clicked")}>

@@ -5,6 +5,8 @@ import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
 import Typography from "@material-ui/core/Typography";
 import CardActions from "@material-ui/core/CardActions";
+import { CardActionArea } from "@material-ui/core";
+import StyledLink from "../../components/StyledLink/StyledLink";
 const useStyles = makeStyles((theme) => ({
   root: {
     border: "2px solid #F4976C",
@@ -42,15 +44,18 @@ const useStyles = makeStyles((theme) => ({
 }));
 function IndividualRecentProject({ project }) {
   const classes = useStyles();
+  const linkToInfo = "/project/"+project.title;
   return (
     <Grid item xs={12} sm={6} md={4}>
       <Card className={classes.root}>
-        <CardContent>
+        <CardActionArea >
+          <StyledLink to={linkToInfo}>
+          <CardContent>
           <Typography className={classes.cardTitle}>{project.title}</Typography>
           <div className={classes.desc}>{project.desc}</div>
           <Grid container spacing={1}>
             {project.techStack.map((tech) => {
-              return (
+              return ( 
                 <Grid item md={3}>
                   <Card className={classes.InnerCard}>{tech}</Card>
                 </Grid>
@@ -58,8 +63,10 @@ function IndividualRecentProject({ project }) {
             })}
           </Grid>
         </CardContent>
+          </StyledLink>
+        </CardActionArea>
         <CardActions className={classes.cardAction}>
-          <Typography style={{ fontWeight: "bold" }}>Actions</Typography>
+              <Typography style={{ fontWeight: "bold" }}>Actions</Typography>
         </CardActions>
       </Card>
     </Grid>
