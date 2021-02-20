@@ -36,7 +36,7 @@ const useStyles = makeStyles((theme)=>{
                 width:"30px",
             },
             padding:"8px",
-            [theme.breakpoints.down("sm")]:{
+            [theme.breakpoints.down("1000px")]:{
                 "& img":{
                     width:"23px",
                 },
