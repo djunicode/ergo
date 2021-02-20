@@ -1,4 +1,4 @@
-import React from "react";
+import React,{ useState } from "react";
 import Action from "./Action";
 import { makeStyles} from "@material-ui/core";
 const useStyles = makeStyles(theme=>({
@@ -24,13 +24,24 @@ const useStyles = makeStyles(theme=>({
 
 function Actions(){
     const classes = useStyles();
+    const [clickedIndex,setClickedIndex] = useState(null);
+    const actionClickHandler = (index) => {
+        setClickedIndex(index);
+    }
     return (
         <div className={classes.actionsPane}>
             <h3 className={classes.title}>Actions</h3>
             <hr className={classes.underline}/>
-            {[1,2,3,4].map(p=>{
-                let isOdd = p%2==1 ? true : false;
-                return <Action key={p} isOdd={isOdd} />
+            {[1,2,3,4].map((obj, index) => { 
+                let shouldShow = clickedIndex == index;
+                let isOdd = index%2==0 ? true : false;
+                return <Action 
+                key={index} 
+                index={index}
+                isOdd={isOdd} 
+                collapseHandler={actionClickHandler} 
+                shown={shouldShow}
+                />
             })}
         </div>  
     );

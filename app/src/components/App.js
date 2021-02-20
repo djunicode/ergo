@@ -20,7 +20,6 @@ let theme = createMuiTheme({
       p:{
         fontFamily: "Open Sans,sans-serif",
         fontWeight:"300",
-        
       },
       pTitle:{
         fontFamily: "Open Sans,sans-serif",
