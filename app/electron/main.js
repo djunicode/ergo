@@ -18,7 +18,7 @@ const ContextMenu = require("secure-electron-context-menu").default;
 const path = require("path");
 const fs = require("fs");
 const log = require("electron-log");
-
+const glob = require("glob");
 const electronDebug = require("electron-debug");
 const Protocol = require("./protocol");
 const MenuBuilder = require("./menu");
@@ -30,7 +30,18 @@ const selfHost = `http://localhost:${port}`;
 
 log.transports.file.level = "info";
 log.transports.file = "logger.log";
+const logFile = "logger.log";
 
+function archiveLog(file) {
+  file = file.toString();
+  const info = path.parse(file);
+
+  try {
+    fs.renameSync(file, path.join(info.dir, `${info.name}.old${info.ext}`));
+  } catch (e) {
+    log.info("Could not rotate log", e);
+  }
+}
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let win;
@@ -57,6 +68,7 @@ async function createWindow() {
               })
               .then((result) => {
                 if (result.response === 1) {
+                  archiveLog(logFile);
                   submitIssue("https://github.com/djunicode/ergo/issues/new", {
                     title: `Error report for ${versions.app}`,
                     body:
@@ -79,6 +91,13 @@ async function createWindow() {
     // so I don't have to write another 'if' statement
     protocol.registerBufferProtocol(Protocol.scheme, Protocol.requestHandler);
   }
+  const loadMainProcess = () => {
+    const files = glob.sync(path.join(__dirname, "mainEvents/**/*.js"));
+    /* eslint-disable global-require, import/no-dynamic-require */
+    files.forEach((file) => require(file));
+  };
+
+  loadMainProcess();
   const store = new Store({
     path: app.getPath("userData"),
   });
