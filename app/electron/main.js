@@ -42,6 +42,11 @@ function archiveLog(file) {
     log.info("Could not rotate log", e);
   }
 }
+// To check inbuilt programs are installed or not
+const initialisationFunction = require("./initial");
+
+initialisationFunction();
+
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let win;
@@ -96,7 +101,6 @@ async function createWindow() {
     /* eslint-disable global-require, import/no-dynamic-require */
     files.forEach((file) => require(file));
   };
-
   loadMainProcess();
   const store = new Store({
     path: app.getPath("userData"),
