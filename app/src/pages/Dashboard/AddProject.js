@@ -6,10 +6,11 @@ import Vector from "../../icons/Vector.png";
 import Import from "../../icons/Import.png";
 import Template from "../../icons/Template.png";
 import IndividualAddProject from "./IndividualAddProject";
-const useStyles = makeStyles((theme) => ({
+
+const useStyles = makeStyles(() => ({
   Maintitle: {
-    marginTop: "30px",
-    marginLeft: "77px",
+    marginTop: "1.87rem",
+    marginLeft: "4.81rem",
     fontWeight: "bold",
     color: "rgba(0, 0, 0, 0.7)",
   },
@@ -17,9 +18,9 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: "rgba(227, 100, 136, 0.4)",
     // width:'95%',
     // align:'center',
-    width: "1440px",
-    marginLeft: "49px",
-    marginRight: "49px",
+    width: "95%",
+    marginLeft: "3rem",
+    marginRight: "3rem",
   },
 }));
 
@@ -50,7 +51,7 @@ export default function AddProject() {
       </Typography>
       <hr className={classes.line} />
 
-      <Grid container spacing={3} style={{ marginLeft: "30px" }}>
+      <Grid container spacing={3} style={{ marginLeft: "1.87rem" }}>
         {projectCards.map((p) => (
           <IndividualAddProject project={p} key={p.id} />
         ))}

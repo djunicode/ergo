@@ -9,11 +9,11 @@ import { makeStyles } from "@material-ui/core/styles";
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    maxWidth: "301px",
-    border: "10px solid #79B8D1",
-    borderRadius: "8px",
-    marginTop: "45px",
-    filter: "drop-shadow(0px 15px 60px rgba(0, 0, 0, 0.1))",
+    maxWidth: "18.8rem",
+    border: "0.62rem solid #79B8D1",
+    borderRadius: "0.5rem",
+    marginTop: "2.82rem",
+    filter: "drop-shadow(0rem 0.94rem 3.75rem rgba(0, 0, 0, 0.1))",
     display: "flex",
     flexDirection: "column",
     justifyContent: "center",
@@ -32,18 +32,18 @@ const useStyles = makeStyles((theme) => ({
   },
   IconbuttonMargin: {
     marginLeft: "35%",
-    marginTop: "44px",
-    marginBottom: "8px",
+    marginTop: "2.8rem",
+    marginBottom: "0.5rem",
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
   },
   InnerTitle: {
-    fontSize: "18px",
+    fontSize: "1.125rem",
     fontWeight: "bold",
     textAlign: "center",
     marginTop: "-10%",
-    marginBottom: "43px",
+    marginBottom: "2.7rem",
   },
 }));
 
@@ -53,10 +53,9 @@ export default function IndividualAddProject({ project }) {
     <Grid item xs={12} sm={6} md={4} lg={3}>
       <Card variant="outlined" className={classes.root}>
         <CardActions>
-          <IconButton
-            className={classes.IconbuttonMargin}
-            onClick={() => console.log("something clicked")}>
-            <img src={project.logo} />
+          <IconButton className={classes.IconbuttonMargin}>
+            {/* onClick={() => console.log("something clicked")} */}
+            <img src={project.logo} alt="logo" />
           </IconButton>
         </CardActions>
         <CardContent className={classes.title}>
