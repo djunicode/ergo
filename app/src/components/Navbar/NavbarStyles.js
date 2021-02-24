@@ -1,32 +1,39 @@
-import React from "react";
-import { fade, makeStyles } from "@material-ui/core/styles";
-import MenuItem from "@material-ui/core/MenuItem";
-import Menu from "@material-ui/core/Menu";
+import { makeStyles } from "@material-ui/core/styles";
 
-export const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles((theme) => ({
   grow: {
     flexGrow: 1,
   },
   menuButton: {
     marginRight: theme.spacing(2),
   },
-
   title: {
-    display: "none",
-    fontSize: "30px",
-    marginLeft: "36px",
-    fontWeight: "bold",
-    [theme.breakpoints.up("sm")]: {
+    ...theme.typography.h1,
+    marginLeft: "1rem",
+    marginRight: "1.8rem",
+    [theme.breakpoints.up("md")]: {
       display: "block",
-      marginRight: "150px",
+      marginRight: "6rem",
+      marginLeft: "2.3rem",
+    },
+  },
+  preButtons: {
+    flexGrow: 1,
+    [theme.breakpoints.down("800px")]: {
+      display: "none",
+    },
+  },
+  logo: {
+    height: "46px",
+    marginLeft: "2rem",
+    [theme.breakpoints.down("xs")]: {
+      height: "38px",
     },
   },
   search: {
     position: "relative",
-    marginLeft: theme.spacing(1),
     color: "white",
     marginRight: theme.spacing(2),
-    marginLeft: "15px",
     width: "100%",
     [theme.breakpoints.up("sm")]: {
       marginLeft: theme.spacing(3),
@@ -34,22 +41,22 @@ export const useStyles = makeStyles((theme) => ({
     },
   },
   searchIcon: {
-    padding: theme.spacing(0, 2),
+    padding: theme.spacing(0, 1),
     height: "100%",
     position: "absolute",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    marginRight: "0px",
+    marginRight: "0",
   },
 
   inputRoot: {
     color: "inherit",
     backgroundColor: "#FFA47A",
-    marginLeft: "95px",
+    marginLeft: "3.4rem",
     width: "400px",
     [theme.breakpoints.down("sm")]: {
-      width: "250px",
+      width: "70%",
     },
   },
 
@@ -59,17 +66,14 @@ export const useStyles = makeStyles((theme) => ({
     paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
     transition: theme.transitions.create("width"),
     width: "100%",
-
     [theme.breakpoints.up("md")]: {
       width: "20ch",
     },
   },
   sectionDesktop: {
-    display: "none",
-    marginLeft: "75px",
-    marginRight: "10px",
-    [theme.breakpoints.up("md")]: {
-      display: "flex",
-    },
+    display: "flex",
+    float: "right",
   },
 }));
+
+export default useStyles;
