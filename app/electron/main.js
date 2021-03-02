@@ -1,4 +1,4 @@
-const {
+import {
   app,
   protocol,
   BrowserWindow,
@@ -6,44 +6,50 @@ const {
   ipcMain,
   Menu,
   dialog,
-} = require("electron");
-const {
-  default: installExtension,
+} from "electron";
+import {
+  installExtension,
   REDUX_DEVTOOLS,
   REACT_DEVELOPER_TOOLS,
-} = require("electron-devtools-installer");
-const i18nextBackend = require("i18next-electron-fs-backend");
-const Store = require("secure-electron-store").default;
-const ContextMenu = require("secure-electron-context-menu").default;
-const path = require("path");
-const fs = require("fs");
-const log = require("electron-log");
-const glob = require("glob");
-const electronDebug = require("electron-debug");
-const Protocol = require("./protocol");
-const MenuBuilder = require("./menu");
+} from "electron-devtools-installer";
+import { mainBindings, clearMainBindings } from "i18next-electron-fs-backend";
+import Store from "secure-electron-store";
+import ContextMenu from "secure-electron-context-menu";
+import { parse, join } from "path";
+import fs, { renameSync } from "fs";
+import {
+  transports,
+  info as _info,
+  catchErrors,
+  error as _error,
+} from "electron-log";
+import { sync } from "glob";
+import electronDebug from "electron-debug";
+import { scheme as _scheme, requestHandler } from "./protocol";
+import MenuBuilder from "./menu";
+// To check inbuilt programs are installed or not
+
+import initialisationFunction from "./initial";
 
 const isDev = process.env.NODE_ENV === "development";
 const port = 40992; // Hardcoded; needs to match webpack.development.js and package.json
 const selfHost = `http://localhost:${port}`;
 // Setup file logging
 
-log.transports.file.level = "info";
-log.transports.file = "logger.log";
+transports.file.level = "info";
+transports.file = "logger.log";
 const logFile = "logger.log";
 
 function archiveLog(file) {
   file = file.toString();
-  const info = path.parse(file);
+  const info = parse(file);
 
   try {
-    fs.renameSync(file, path.join(info.dir, `${info.name}.old${info.ext}`));
+    renameSync(file, join(info.dir, `${info.name}.old${info.ext}`));
   } catch (e) {
-    log.info("Could not rotate log", e);
+    _info("Could not rotate log", e);
   }
 }
-// To check inbuilt programs are installed or not
-const initialisationFunction = require("./initial");
 
 initialisationFunction();
 
@@ -58,9 +64,9 @@ const date = `0${dateOb.getDate()}`.slice(-2);
 async function createWindow() {
   if (isDev) {
     await installExtension([REDUX_DEVTOOLS, REACT_DEVELOPER_TOOLS])
-      .then((name) => log.info(`Added Extension:  ${name}`))
+      .then((name) => _info(`Added Extension:  ${name}`))
       .catch(
-        log.catchErrors({
+        catchErrors({
           showDialog: true,
           onError(error, versions, submitIssue) {
             dialog
@@ -94,11 +100,12 @@ async function createWindow() {
     // Needs to happen before creating/loading the browser window;
     // not necessarily instead of extensions, just using this code block
     // so I don't have to write another 'if' statement
-    protocol.registerBufferProtocol(Protocol.scheme, Protocol.requestHandler);
+    protocol.registerBufferProtocol(_scheme, requestHandler);
   }
   const loadMainProcess = () => {
-    const files = glob.sync(path.join(__dirname, "mainEvents/**/*.js"));
-    /* eslint-disable global-require, import/no-dynamic-require */
+    const files = sync(join(__dirname, "mainEvents/**/*.js"));
+    // eslint-disable-next-line global-require
+    // eslint-disable-next-line import/no-dynamic-require
     files.forEach((file) => require(file));
   };
   loadMainProcess();
@@ -124,20 +131,20 @@ async function createWindow() {
       contextIsolation: true,
       enableRemoteModule: false,
       additionalArguments: [`storePath:${app.getPath("userData")}`],
-      preload: path.join(__dirname, "preload.js"),
+      preload: join(__dirname, "preload.js"),
     },
   });
 
   // Sets up main.js bindings for our i18next backend
-  i18nextBackend.mainBindings(ipcMain, win, fs);
+  mainBindings(ipcMain, win, fs);
 
   // Sets up main.js bindings for our electron store;
   // callback is optional and allows you to use store in main process
   const callback = function callback(success, initialStore) {
-    log.info(
+    _info(
       `${!success ? "Un-s" : "S"}uccessfully retrieved store in main process.`
     );
-    log.info(initialStore);
+    _info(initialStore);
     /* {"key1": "value1", ... }
     Storing the initial store in the main process
     */
@@ -165,7 +172,7 @@ async function createWindow() {
   if (isDev) {
     win.loadURL(selfHost);
   } else {
-    win.loadURL(`${Protocol.scheme}://rse/index-prod.html`);
+    win.loadURL(`${_scheme}://rse/index-prod.html`);
   }
 
   // Only do these things when in development
@@ -174,7 +181,6 @@ async function createWindow() {
     // before the DOM is ready
     win.webContents.once("dom-ready", () => {
       // win.webContents.openDevTools(); // see https://github.com/reZach/secure-electron-template/issues/48
-      // eslint-disable-next-line global-require
       electronDebug(); // https://github.com/sindresorhus/electron-debug
     });
   }
@@ -198,7 +204,7 @@ async function createWindow() {
       if (allowedPermissions.includes(permission)) {
         permCallback(true); // Approve permission request
       } else {
-        log.catchErrors({
+        catchErrors({
           showDialog: false,
           onError(error, versions, submitIssue) {
             dialog
@@ -253,7 +259,7 @@ async function createWindow() {
 // https://electronjs.org/docs/api/protocol#protocolregisterschemesasprivilegedcustomschemes
 protocol.registerSchemesAsPrivileged([
   {
-    scheme: Protocol.scheme,
+    scheme: _scheme,
     privileges: {
       standard: true,
       secure: true,
@@ -273,7 +279,7 @@ app.on("window-all-closed", () => {
   if (process.platform !== "darwin") {
     app.quit();
   } else {
-    i18nextBackend.clearMainBindings(ipcMain);
+    clearMainBindings(ipcMain);
     ContextMenu.clearMainBindings(ipcMain);
   }
 });
@@ -295,16 +301,9 @@ app.on("web-contents-created", (event, contents) => {
     // Log and prevent the app from navigating to a new page if
     // that page's origin is not whitelisted
     if (!validOrigins.includes(parsedUrl.origin)) {
-      log.error(
+      _error(
         `The application tried to redirect to the following address: '${parsedUrl}'. This origin is not whitelisted and the attempt to navigate was blocked.`
       );
-      /* !TODO LOG
-      console.error(
-    `The application tried to redirect to the following address: '${parsedUrl}'.
-    This origin is not whitelisted and the attempt to navigate was blocked.`
-
-      );
-        */
     }
   });
 
@@ -314,7 +313,7 @@ app.on("web-contents-created", (event, contents) => {
 
     // Log and prevent the app from redirecting to a new page
     if (!validOrigins.includes(parsedUrl.origin)) {
-      log.error(
+      _error(
         `The application tried to redirect to the following address: '${navigationUrl}'. This attempt was blocked.`
       );
     }
@@ -336,7 +335,7 @@ app.on("web-contents-created", (event, contents) => {
   contents.on("new-window", (contentsEvent, navigationUrl) => {
     // Log and prevent opening up a new window
 
-    log.error(
+    _error(
       `The application tried to open a new window at the following address: '${navigationUrl}'. This attempt was blocked.`
     );
     contentsEvent.preventDefault();
