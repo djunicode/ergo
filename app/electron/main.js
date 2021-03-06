@@ -16,6 +16,7 @@ const Store = require("secure-electron-store").default;
 const ContextMenu = require("secure-electron-context-menu").default;
 const path = require("path");
 const fs = require("fs");
+const MyEvents = require("./MyEvents");
 const Protocol = require("./protocol");
 const MenuBuilder = require("./menu");
 
@@ -100,6 +101,8 @@ async function createWindow() {
       },
     ],
   });
+
+  MyEvents.mainBindings(ipcMain, win, fs, callback);
 
   // Load app
   if (isDev) {
