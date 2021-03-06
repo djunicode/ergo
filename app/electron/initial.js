@@ -9,7 +9,7 @@ const newElectronStore = new ElectronStore();
 
 const commands = require("./commands");
 
-module.exports = function () {
+module.exports = () => {
   // Checking for the Operating System
   if (process.platform === "darwin") {
     newElectronStore.set("platform", "mac");

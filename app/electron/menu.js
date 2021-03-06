@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 const { Menu } = require("electron");
 const i18nBackend = require("i18next-electron-fs-backend");
 const { shell } = require("electron");
