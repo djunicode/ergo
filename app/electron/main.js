@@ -1,4 +1,4 @@
-import {
+const {
   app,
   protocol,
   BrowserWindow,
@@ -6,38 +6,36 @@ import {
   ipcMain,
   Menu,
   dialog,
-} from "electron";
-import {
-  installExtension,
+} = require("electron");
+const {
+  default: installExtension,
   REDUX_DEVTOOLS,
   REACT_DEVELOPER_TOOLS,
-} from "electron-devtools-installer";
-import { mainBindings, clearMainBindings } from "i18next-electron-fs-backend";
-import Store from "secure-electron-store";
-import ContextMenu from "secure-electron-context-menu";
-import { parse, join } from "path";
-import fs, { renameSync } from "fs";
-import {
-  transports,
-  info as _info,
-  catchErrors,
-  error as _error,
-} from "electron-log";
-import { sync } from "glob";
-import electronDebug from "electron-debug";
-import { scheme as _scheme, requestHandler } from "./protocol";
-import MenuBuilder from "./menu";
+} = require("electron-devtools-installer");
+const {
+  mainBindings,
+  clearMainBindings,
+} = require("i18next-electron-fs-backend");
+const Store = require("secure-electron-store").default;
+const ContextMenu = require("secure-electron-context-menu").default;
+const { parse, join } = require("path");
+const fs = require("fs");
+const log = require("electron-log");
+// const { sync } = require("glob");
+const electronDebug = require("electron-debug");
+const { scheme, requestHandler } = require("./protocol");
+const MenuBuilder = require("./menu");
 // To check inbuilt programs are installed or not
 
-import initialisationFunction from "./initial";
+const initialisationFunction = require("./initial");
 
 const isDev = process.env.NODE_ENV === "development";
 const port = 40992; // Hardcoded; needs to match webpack.development.js and package.json
 const selfHost = `http://localhost:${port}`;
 // Setup file logging
 
-transports.file.level = "info";
-transports.file = "logger.log";
+log.transports.file.level = "info";
+log.transports.file = "logger.log";
 const logFile = "logger.log";
 
 function archiveLog(file) {
@@ -45,9 +43,9 @@ function archiveLog(file) {
   const info = parse(file);
 
   try {
-    renameSync(file, join(info.dir, `${info.name}.old${info.ext}`));
+    fs.renameSync(file, join(info.dir, `${info.name}.old${info.ext}`));
   } catch (e) {
-    _info("Could not rotate log", e);
+    log.info("Could not rotate log", e);
   }
 }
 
@@ -64,9 +62,9 @@ const date = `0${dateOb.getDate()}`.slice(-2);
 async function createWindow() {
   if (isDev) {
     await installExtension([REDUX_DEVTOOLS, REACT_DEVELOPER_TOOLS])
-      .then((name) => _info(`Added Extension:  ${name}`))
+      .then((name) => log.info(`Added Extension:  ${name}`))
       .catch(
-        catchErrors({
+        log.catchErrors({
           showDialog: true,
           onError(error, versions, submitIssue) {
             dialog
@@ -100,13 +98,11 @@ async function createWindow() {
     // Needs to happen before creating/loading the browser window;
     // not necessarily instead of extensions, just using this code block
     // so I don't have to write another 'if' statement
-    protocol.registerBufferProtocol(_scheme, requestHandler);
+    protocol.registerBufferProtocol(scheme, requestHandler);
   }
   const loadMainProcess = () => {
-    const files = sync(join(__dirname, "mainEvents/**/*.js"));
-    // eslint-disable-next-line global-require
-    // eslint-disable-next-line import/no-dynamic-require
-    files.forEach((file) => require(file));
+    // const files = sync(join(__dirname, "mainEvents/**/*.js"));
+    // files.forEach((file) => require(file));
   };
   loadMainProcess();
   const store = new Store({
@@ -141,10 +137,10 @@ async function createWindow() {
   // Sets up main.js bindings for our electron store;
   // callback is optional and allows you to use store in main process
   const callback = function callback(success, initialStore) {
-    _info(
+    log.info(
       `${!success ? "Un-s" : "S"}uccessfully retrieved store in main process.`
     );
-    _info(initialStore);
+    log.info(initialStore);
     /* {"key1": "value1", ... }
     Storing the initial store in the main process
     */
@@ -172,7 +168,7 @@ async function createWindow() {
   if (isDev) {
     win.loadURL(selfHost);
   } else {
-    win.loadURL(`${_scheme}://rse/index-prod.html`);
+    win.loadURL(`${scheme}://rse/index-prod.html`);
   }
 
   // Only do these things when in development
@@ -204,7 +200,7 @@ async function createWindow() {
       if (allowedPermissions.includes(permission)) {
         permCallback(true); // Approve permission request
       } else {
-        catchErrors({
+        log.catchErrors({
           showDialog: false,
           onError(error, versions, submitIssue) {
             dialog
@@ -259,7 +255,7 @@ async function createWindow() {
 // https://electronjs.org/docs/api/protocol#protocolregisterschemesasprivilegedcustomschemes
 protocol.registerSchemesAsPrivileged([
   {
-    scheme: _scheme,
+    scheme: scheme,
     privileges: {
       standard: true,
       secure: true,
@@ -301,7 +297,7 @@ app.on("web-contents-created", (event, contents) => {
     // Log and prevent the app from navigating to a new page if
     // that page's origin is not whitelisted
     if (!validOrigins.includes(parsedUrl.origin)) {
-      _error(
+      log.error(
         `The application tried to redirect to the following address: '${parsedUrl}'. This origin is not whitelisted and the attempt to navigate was blocked.`
       );
     }
@@ -313,7 +309,7 @@ app.on("web-contents-created", (event, contents) => {
 
     // Log and prevent the app from redirecting to a new page
     if (!validOrigins.includes(parsedUrl.origin)) {
-      _error(
+      log.error(
         `The application tried to redirect to the following address: '${navigationUrl}'. This attempt was blocked.`
       );
     }
@@ -335,7 +331,7 @@ app.on("web-contents-created", (event, contents) => {
   contents.on("new-window", (contentsEvent, navigationUrl) => {
     // Log and prevent opening up a new window
 
-    _error(
+    log.error(
       `The application tried to open a new window at the following address: '${navigationUrl}'. This attempt was blocked.`
     );
     contentsEvent.preventDefault();
