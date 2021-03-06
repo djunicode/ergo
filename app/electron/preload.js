@@ -1,5 +1,6 @@
 const { contextBridge, ipcRenderer } = require("electron");
 const fs = require("fs");
+const MyEvents = require("./MyEvents");
 const i18nextBackend = require("i18next-electron-fs-backend");
 const Store = require("secure-electron-store").default;
 const ContextMenu = require("secure-electron-context-menu").default;
@@ -13,4 +14,5 @@ contextBridge.exposeInMainWorld("api", {
   i18nextElectronBackend: i18nextBackend.preloadBindings(ipcRenderer),
   store: store.preloadBindings(ipcRenderer, fs),
   contextMenu: ContextMenu.preloadBindings(ipcRenderer),
+  api: MyEvents.preloadBindings(ipcRenderer, fs),
 });

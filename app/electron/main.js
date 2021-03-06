@@ -11,6 +11,7 @@ const {
   REDUX_DEVTOOLS,
   REACT_DEVELOPER_TOOLS,
 } = require("electron-devtools-installer");
+const MyEvents = require("./MyEvents");
 const Protocol = require("./protocol");
 const MenuBuilder = require("./menu");
 const i18nextBackend = require("i18next-electron-fs-backend");
@@ -95,6 +96,8 @@ async function createWindow() {
       },
     ],
   });
+
+  MyEvents.mainBindings(ipcMain, win, fs, callback);
 
   // Load app
   if (isDev) {
