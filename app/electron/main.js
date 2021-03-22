@@ -103,6 +103,7 @@ async function createWindow() {
   const store = new Store({
     path: app.getPath("userData"),
   });
+  events.mainBindings(ipcMain, win, fs, callback);
   // Use saved config values for configuring your
   // BrowserWindow, for instance.
   // NOTE - this config is not passcode protected
