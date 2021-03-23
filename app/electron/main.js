@@ -51,15 +51,22 @@ function archiveLog(file) {
 }
 
 initialisationFunction();
-// Example of project creation
 /*
-let returnValue = createProject("hello", app.getPath("userData"), "node");
-if(returnValue.success === true)
-{
-  handleLogging
-}else {
-  handleLogging
-}
+// Example of project creation
+let project1 = {
+  name: "hello1",
+  type: "node",
+};
+createProject(project1, app.getPath("userData"))
+  .then((returnValue) => console.log(returnValue))
+  .catch((err) => console.log(err));
+let project2 = {
+  name: "mysite1",
+  type: "django",
+};
+createProject(project2, app.getPath("userData"))
+  .then((returnValue) => console.log(returnValue))
+  .catch((err) => console.log(err));
 */
 
 // Keep a global reference of the window object, if you don't, the window will

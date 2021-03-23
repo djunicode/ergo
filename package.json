@@ -16,7 +16,7 @@
     "dist-linux": "npm run prod-build && electron-builder --linux",
     "dist-windows": "npm run prod-build && electron-builder --windows",
     "dist-all": "npm run prod-build && electron-builder --mac --linux --windows",
-    "test": "mocha",
+    "test": "mocha --timeout 6000",
     "pretty": "prettier --write \"app/electron/**/*.js\"",
     "lint": "eslint \"app/electron/\""
   },
@@ -129,6 +129,6 @@
     "redux": "^4.0.5",
     "secure-electron-context-menu": "^1.2.2",
     "secure-electron-store": "^1.3.3",
-    "shelljs": "^0.8.4"
+    "shelljs": "^0.7.5"
   }
 }
