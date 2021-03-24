@@ -1,7 +1,8 @@
+/* eslint-disable consistent-return */
 const { exec } = require("child_process");
 const log = require("electron-log");
 
-function launchCodeEdiitor(preferredEdittor, path) {
+exports.launchCodeEdiitor = function (preferredEdittor, path) {
   if (preferredEdittor === "Eclipse") {
     exec(`eclipse "${path}"`, (error) => {
       if (error) {
@@ -21,10 +22,14 @@ function launchCodeEdiitor(preferredEdittor, path) {
       }
     });
   } else if (preferredEdittor === "VSCode") {
-    exec(`code "${path}"`, (error) => {
-      if (error) {
-        log.error(error);
-      }
+    return new Promise((resolve, reject) => {
+      exec(`code "${path}"`, (error) => {
+        if (error) {
+          reject(error);
+        } else {
+          resolve({ success: true });
+        }
+      });
     });
   } else {
     exec(`notepad "${path}"`, (error) => {
@@ -33,16 +38,31 @@ function launchCodeEdiitor(preferredEdittor, path) {
       }
     });
   }
-}
+};
 
-function launchFileManager(path) {
+exports.launchFileManager = function (path) {
   if (process.platform === "linux") {
-    exec(`xdg-open "${path}"`);
+    return new Promise((resolve, reject) => {
+      exec(`xdg-open "${path}"`, (error) => {
+        if (error) {
+          reject(error);
+        } else {
+          resolve({ success: true });
+        }
+      });
+    });
   }
-  if (process.platform === "win") {
-    exec(`explorer "${path}"`);
+  if (process.platform === "win32") {
+    return new Promise((resolve, reject) => {
+      exec(`explorer ${path}`, (code, stdout, stderr) => {
+        if (stderr) {
+          reject(stderr);
+        } else {
+          resolve({ success: true });
+        }
+      });
+    });
   }
-}
-launchFileManager("add path here");
-launchCodeEdiitor("add language", "C:\\path\\to\\folder\\here");
-module.exports = launchCodeEdiitor;
+};
+// exports.launchCodeEdiitor("VSCode", "C:\\Users\\hrida\\OneDrive\\Documents");
+// exports.launchFileManager("C:\\Users\\hrida\\OneDrive\\Documents");
