@@ -7,9 +7,9 @@ const xTerm = "xterm -fa 'Monospace' -fs 12 -e /bin/bash -l -c ";
 const insertCommandLinux = (arrCommand, type) => {
   const command = arrCommand.join(" ");
   if (type === "xterm") {
-    return `${`${xTerm}'${command}`};/bin/bash'`;
+    return `${`${xTerm}'${command}`}; exec $SHELL'`;
   }
-  return `${`${gnomeTerminal}'${command}`}; exec bash'`;
+  return `${`${gnomeTerminal}'${command}`}; exec $SHELL'`;
 };
 module.exports = (arrCommand, type = "gnomeTerminal") => {
   return new Promise((resolve, reject) => {
