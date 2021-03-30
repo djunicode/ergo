@@ -21,8 +21,8 @@ const ContextMenu = require("secure-electron-context-menu").default;
 const { parse, join } = require("path");
 const fs = require("fs");
 const log = require("electron-log");
-// const { sync } = require("glob");
 const electronDebug = require("electron-debug");
+const events = require("./events");
 const { scheme, requestHandler } = require("./protocol");
 const MenuBuilder = require("./menu");
 // To check inbuilt programs are installed or not
@@ -100,11 +100,6 @@ async function createWindow() {
     // so I don't have to write another 'if' statement
     protocol.registerBufferProtocol(scheme, requestHandler);
   }
-  const loadMainProcess = () => {
-    // const files = sync(join(__dirname, "mainEvents/**/*.js"));
-    // files.forEach((file) => require(file));
-  };
-  loadMainProcess();
   const store = new Store({
     path: app.getPath("userData"),
   });
@@ -163,7 +158,7 @@ async function createWindow() {
       },
     ],
   });
-
+  events.mainBindings(ipcMain, win, fs, callback);
   // Load app
   if (isDev) {
     win.loadURL(selfHost);
