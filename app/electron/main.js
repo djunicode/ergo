@@ -337,7 +337,6 @@ app.on("web-contents-created", (event, contents) => {
     contentsEvent.preventDefault();
   });
 });
-
 // Filter loading any module via remote;
 // you shouldn't be using remote at all, though
 // https://electronjs.org/docs/tutorial/security#16-filter-the-remote-module
@@ -349,15 +348,12 @@ app.on("remote-require", (event) => {
 app.on("remote-get-builtin", (event) => {
   event.preventDefault();
 });
-
 app.on("remote-get-global", (event) => {
   event.preventDefault();
 });
-
 app.on("remote-get-current-window", (event) => {
   event.preventDefault();
 });
-
 app.on("remote-get-current-web-contents", (event) => {
   event.preventDefault();
 });
