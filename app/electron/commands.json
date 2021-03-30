@@ -12,6 +12,10 @@
     "value": "py --version"
   },
   {
+    "key": "django",
+    "value": "python -m django --version"
+  },
+  {
     "key": "conda",
     "value": "conda -V"
   },

@@ -28,6 +28,7 @@ const MenuBuilder = require("./menu");
 // To check inbuilt programs are installed or not
 
 const initialisationFunction = require("./initial");
+// const createProject = require("./createProject");
 
 const isDev = process.env.NODE_ENV === "development";
 const port = 40992; // Hardcoded; needs to match webpack.development.js and package.json
@@ -50,6 +51,20 @@ function archiveLog(file) {
 }
 
 initialisationFunction();
+/*
+// Example of project creation
+let project1 = {
+  name: "hello1",
+  type: "node",
+};
+// Returns Promise
+let result = createProject(project1, app.getPath("userData"))
+let project2 = {
+  name: "mysite1",
+  type: "django",
+};
+result = createProject(project2, app.getPath("userData"))
+*/
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
