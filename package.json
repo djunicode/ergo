@@ -16,7 +16,7 @@
     "dist-linux": "npm run prod-build && electron-builder --linux",
     "dist-windows": "npm run prod-build && electron-builder --windows",
     "dist-all": "npm run prod-build && electron-builder --mac --linux --windows",
-    "test": "mocha --timeout 6000",
+    "test": "mocha --timeout 20000",
     "pretty": "prettier --write \"app/electron/**/*.js\"",
     "lint": "eslint \"app/electron/\""
   },

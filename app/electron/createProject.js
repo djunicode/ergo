@@ -1,4 +1,5 @@
 const sh = require("shelljs");
+const log = require("electron-log");
 
 // Examples
 /*
@@ -10,33 +11,30 @@ let project1 = {
 
 module.exports = (project, location) => {
   // Making a Projects Folder to store all the projects
-  let cmd2 = "";
+  let cmd = `${location[0]}: && cd ${location} && mkdir Projects`;
+
+  sh.exec(cmd, { silent: true }, (code,stdout,stderr) => {
+    if (code !== 0) {
+      log.error(stderr);
+    } else if (code === 0) {
+      log.info("Projects Folder successfully created")
+    }
+  });
 
   if (project.type === "node") {
     // Traversing to inside the Projects Folder
-    cmd2 = `mkdir ${project.name} && cd ${project.name} && npm init -y`;
+    cmd = `mkdir ${project.name} && cd ${project.name} && npm init -y`;
   } else if (project.type === "django") {
-    cmd2 = `django-admin startproject ${project.name} && cd ${project.name} && echo > requirements.txt`;
+    cmd = `django-admin startproject ${project.name} && cd ${project.name} && echo > requirements.txt`;
   }
 
   return new Promise((resolve, reject) => {
-    sh.exec(
-      `${location[0]}: && cd ${location} && mkdir Projects && cd Projects && ${cmd2}`,
-      { silent: true },
-      (code) => {
+    sh.exec(`${location[0]}: && cd ${location} && cd Projects && ${cmd}`,{ silent: true },(code , stdout , stderr) => {
         if (code !== 0) {
-          sh.exec(
-            `${location[0]}: && cd ${location} && cd Projects && ${cmd2}`,
-            { silent: true },
-            (code1, stdout, stderr) => {
-              if (code1 !== 0) {
-                reject(stderr);
-              } else if (code1 === 0) {
-                resolve({ success: true });
-              }
-            }
-          );
+          log.error(stderr);
+          reject(stderr);
         } else if (code === 0) {
+          log.info(`Successfully created Project : ${project.name}`)
           resolve({ success: true });
         }
       }
