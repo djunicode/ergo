@@ -1,7 +1,7 @@
 const { expect } = require("chai");
 const createProject = require("../app/electron/createProject");
 
-let location = "C:\\Users\\win\\AppData\\Roaming\\ergo"
+let location = "C:\\Users\\Accounts\\AppData\\Roaming\\ergo"
 
 describe("Create a folder of the Project", () => {
   it("Should create appropriate files and folder for a Node Project", async() => {

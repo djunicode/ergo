@@ -13,11 +13,11 @@ module.exports = (project, location) => {
   // Making a Projects Folder to store all the projects
   let cmd = `${location[0]}: && cd ${location} && mkdir Projects`;
 
-  sh.exec(cmd, { silent: true }, (code,stdout,stderr) => {
+  sh.exec(cmd, { silent: true }, (code, stdout, stderr) => {
     if (code !== 0) {
       log.error(stderr);
     } else if (code === 0) {
-      log.info("Projects Folder successfully created")
+      log.info("Projects Folder successfully created");
     }
   });
 
@@ -29,12 +29,15 @@ module.exports = (project, location) => {
   }
 
   return new Promise((resolve, reject) => {
-    sh.exec(`${location[0]}: && cd ${location} && cd Projects && ${cmd}`,{ silent: true },(code , stdout , stderr) => {
+    sh.exec(
+      `${location[0]}: && cd ${location} && cd Projects && ${cmd}`,
+      { silent: true },
+      (code, stdout, stderr) => {
         if (code !== 0) {
           log.error(stderr);
           reject(stderr);
         } else if (code === 0) {
-          log.info(`Successfully created Project : ${project.name}`)
+          log.info(`Successfully created Project : ${project.name}`);
           resolve({ success: true });
         }
       }
