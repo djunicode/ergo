@@ -1,7 +1,15 @@
+// To run this test particularly => npm run test test/createProject
 const { expect } = require("chai");
 const createProject = require("../app/electron/createProject");
 
-let location = "C:\\Users\\Accounts\\AppData\\Roaming\\ergo"
+let location ='';
+if(process.platform === 'linux')
+{
+  location = '/home/ubuntu/.config/ergo'
+}else if(process.platform === 'win32')
+{
+  location = "C:\\Users\\Accounts\\AppData\\Roaming\\ergo"
+}
 
 describe("Create a folder of the Project", () => {
   it("Should create appropriate files and folder for a Node Project", async() => {

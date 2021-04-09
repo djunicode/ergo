@@ -58,12 +58,12 @@ let project1 = {
   type: "node",
 };
 // Returns Promise
-let result = createProject(project1, app.getPath("userData"))
+let result = createProject(project1);
 let project2 = {
   name: "mysite1",
   type: "django",
 };
-result = createProject(project2, app.getPath("userData"))
+result = createProject(project2);
 */
 
 // Keep a global reference of the window object, if you don't, the window will
