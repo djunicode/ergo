@@ -172,12 +172,10 @@ export default function IndividualAddProject({ project }) {
 
   const [template, setTemplate] = useState([]);
 
-  console.log(state)
+  const handleDelete = () => {
+    console.log("Chip Deleted")
+  }
   
-  const key = project.id
-
-
-
   return (
     <>
     <Grid item xs={12} sm={6} md={4} lg={3}>
