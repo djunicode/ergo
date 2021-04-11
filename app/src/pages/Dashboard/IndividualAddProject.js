@@ -52,6 +52,43 @@ const useStyles = makeStyles((theme) => ({
       marginRight: "-10%",
     },
   },
+  form : {
+    margin:"12px 20px"
+  },
+  inputName: {
+    marginTop:"10px", 
+    marginBottom:"8px",
+    fontSize:"1.2rem",
+    paddingLeft:"4px"
+  },
+  textArea: {
+    resize: "none",
+    width: "500px",
+    height: "80px",
+    borderRadius: "8px",
+    padding:"10px",
+    border:"1px solid #404040",
+  },
+  inputTitle : {
+    marginBottom:"8px",
+    fontSize:"1.2rem",
+    paddingLeft:"4px"
+  },
+  chipSection: {
+    width:"500px",
+    height:"60px",
+    border:"1px solid #404040",
+    borderRadius:"6px",
+    marginTop:"4px",
+    padding:"10px"
+  },
+  inputProject: {
+    padding:"15px 5px",
+    border:"1px solid #404040",
+    borderRadius:"3px",
+    width:"40%",
+    height:"20px"
+  },
   formControl: {
     minWidth: 200,
   },
@@ -119,7 +156,7 @@ const styles = (theme) => ({
 
 
 export default function IndividualAddProject({ project }) {
-  const [open, setOpen] = React.useState(false);
+  
 
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
@@ -134,12 +171,6 @@ export default function IndividualAddProject({ project }) {
   const [state, setState] = React.useState([]);
 
   const [template, setTemplate] = useState([]);
-
-
-
-  const handleDelete = () => {
-    console.info('You clicked the delete icon.');
-  };
 
   console.log(state)
   
@@ -173,35 +204,22 @@ export default function IndividualAddProject({ project }) {
 
         <DialogContent dividers style={{padding:"10px"}}>
 
-          <form style={{margin:"12px 20px"}}>
+          <form className={classes.form}>
 
             <div>
-              <p style={{marginTop:"10px", marginBottom:"8px",fontSize:"1.2rem", paddingLeft:"4px"}}>
-               {( project.id === 3 ) ? "Template" : "Project"}
+              <p className={classes.inputName}>
+               {( project.id === 3 ) ? "Template Name" : "Project Name"}   
               </p>
-              <input placeholder="Enter project name" 
-                style={{padding:"15px 5px",
-                        border:"1px solid #404040",
-                        borderRadius:"3px",
-                        width:"40%",
-                        height:"20px"}} 
-              />
+              <input placeholder="Enter project name" className={classes.inputProject}/>
             </div>
 
             <div>
               { ( project.id !==  3 ) ? 
               (
                 <div>
-                  <p style={{marginBottom:"8px",fontSize:"1.2rem", paddingLeft:"4px"}}>Description</p>
+                  <p className={classes.inputTitle}>Description</p>
                   <textarea 
-                    style={{
-                      resize: "none",
-                      width: "500px",
-                      height: "80px",
-                      borderRadius: "8px",
-                      padding:"10px",
-                      border:"1px solid #404040"
-                    }} 
+                    className={classes.textArea} 
                     placeholder="Enter project name"/>
                   </div>) : "" }
             </div>
@@ -210,16 +228,9 @@ export default function IndividualAddProject({ project }) {
               { ( project.id ===  3 ) ? 
               (
                 <div>
-                  <p style={{marginBottom:"8px",fontSize:"1.2rem", paddingLeft:"4px"}}>Add Stack</p>
+                  <p className={classes.inputTitle}>Add Stack</p>
                   <textarea 
-                    style={{
-                      resize: "none",
-                      width: "500px",
-                      height: "80px",
-                      borderRadius: "8px",
-                      padding:"10px",
-                      border:"1px solid #404040"
-                    }} 
+                    className={classes.textArea}
                     placeholder="Add Stacks"/>
                   </div>) : "" }
             </div>
@@ -227,7 +238,7 @@ export default function IndividualAddProject({ project }) {
 
             <div>
               <section>
-                  <p style={{marginBottom:"8px",fontSize:"1.2rem", paddingLeft:"4px"}}>Add Tags</p>
+                  <p className={classes.inputTitle}>Add Tags</p>
                   <FormControl variant="outlined" className={classes.formControl}>
                     <Select
                       native
@@ -240,13 +251,7 @@ export default function IndividualAddProject({ project }) {
                       ))}
                     </Select>
                   </FormControl>
-                  <section style={{width:"500px",
-                                  height:"60px",
-                                  border:"1px solid #404040",
-                                  borderRadius:"6px",
-                                  marginTop:"4px",
-                                  padding:"10px"}}
-                  >
+                  <section className={classes.chipSection}>
                     
                     {state.map(sta=>(
                       <Chip label={sta} onDelete={handleDelete} color="primary" variant="outlined" style={{marginRight:"10px", marginBottom:"5px"}} />
@@ -262,7 +267,7 @@ export default function IndividualAddProject({ project }) {
             { ( project.id !==  3 ) ? 
               (
               <section>
-                <p style={{marginBottom:"8px",fontSize:"1.2rem", paddingLeft:"4px"}}>Select Template</p>
+                <p className={classes.inputTitle}>Select Template</p>
                 <FormControl variant="outlined" className={classes.templateControl}>
                     <Select
                       native
@@ -286,7 +291,7 @@ export default function IndividualAddProject({ project }) {
             { ( project.id !==  3 ) ? 
               (
               <section>
-                <p style={{marginBottom:"8px",fontSize:"1.2rem", paddingLeft:"4px"}}>Specify Path</p>
+                <p className={classes.inputTitle}>Specify Path</p>
                 <FormControl variant="outlined" className={classes.templateControl}>
                     <Select
                       native
@@ -317,6 +322,8 @@ export default function IndividualAddProject({ project }) {
     </>
   );
 }
+
+
 
 
 const DialogTitle = withStyles(styles)((props) => {
