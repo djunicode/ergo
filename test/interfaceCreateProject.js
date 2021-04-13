@@ -1,6 +1,6 @@
-// To run this test particularly => npm run test test/createProject
+// To run this test particularly => npm run test test/interfaceCreateProject
 const { expect } = require("chai");
-const createProject = require("../app/electron/createProject");
+const interfaceCreateProject = require("../app/electron/interfaceCreateProject");
 
 let location ='';
 if(process.platform === 'linux')
@@ -18,7 +18,7 @@ describe("Create a folder of the Project", () => {
       type : "node"
     }
     try {
-      let result = await createProject(project1 , location)
+      let result = await interfaceCreateProject(project1 , location)
       expect(result).to.have.property("success");
       expect(result.success).to.equal(true);
     } catch (error) {
@@ -33,7 +33,7 @@ describe("Create a folder of the Project", () => {
       type : "django"
     }
     try {
-      let result = await createProject(project2 , location)
+      let result = await interfaceCreateProject(project2 , location)
       expect(result).to.have.property("success");
       expect(result.success).to.equal(true);
     } catch (error) {

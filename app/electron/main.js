@@ -28,7 +28,7 @@ const MenuBuilder = require("./menu");
 // To check inbuilt programs are installed or not
 
 const initialisationFunction = require("./initial");
-// const createProject = require("./createProject");
+// const interfaceCreateProject = require("./interfaceCreateProject");
 
 const isDev = process.env.NODE_ENV === "development";
 const port = 40992; // Hardcoded; needs to match webpack.development.js and package.json
@@ -58,14 +58,13 @@ let project1 = {
   type: "node",
 };
 // Returns Promise
-let result = createProject(project1);
+let result = interfaceCreateProject(project1);
 let project2 = {
   name: "mysite1",
   type: "django",
 };
-result = createProject(project2);
+result = interfaceCreateProject(project2);
 */
-
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let win;

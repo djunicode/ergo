@@ -26,13 +26,13 @@ module.exports = () => {
   }
 
   // Making a Projects Folder to store all the projects
-  let cmd = '';
+  let cmd = "";
   if (process.platform === "linux") {
     cmd = `cd ${location} && mkdir Projects`;
   } else if (process.platform === "win32") {
     cmd = `${location[0]}: && cd ${location} && mkdir Projects`;
   }
-   
+
   sh.exec(cmd, { silent: true }, (code, stdout, stderr) => {
     if (code !== 0) {
       log.error(stderr);
@@ -40,7 +40,7 @@ module.exports = () => {
       log.info("Projects Folder successfully created");
     }
   });
-  
+
   commands.forEach((command) => {
     sh.exec(command.value, { silent: true }, (code) => {
       if (code !== 0) {
