@@ -25,6 +25,7 @@ import ArrowForwardIosRoundedIcon from '@material-ui/icons/ArrowForwardIosRounde
 
 
 const dummy  = [
+  {key:"0", item:""},
   {key:"1", item:"item 1"},
   {key:"2", item:"item 2"},
   {key:"3", item:"item 3"},
@@ -55,11 +56,16 @@ const useStyles = makeStyles((theme) => ({
   form : {
     margin:"12px 20px"
   },
+  dialogueTitle: {
+    textAlign :"center",
+    paddingLeft: "30px"
+  },
   inputName: {
     marginTop:"10px", 
     marginBottom:"8px",
     fontSize:"1.2rem",
-    paddingLeft:"4px"
+    paddingLeft:"4px",
+    fontFamily: "Arial, sans-serif"
   },
   textArea: {
     resize: "none",
@@ -68,11 +74,13 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: "8px",
     padding:"10px",
     border:"1px solid #404040",
+    fontFamily: "Arial, sans-serif"
   },
   inputTitle : {
     marginBottom:"8px",
     fontSize:"1.2rem",
-    paddingLeft:"4px"
+    paddingLeft:"4px",
+    fontFamily: "Arial, sans-serif"
   },
   chipSection: {
     width:"500px",
@@ -87,7 +95,8 @@ const useStyles = makeStyles((theme) => ({
     border:"1px solid #404040",
     borderRadius:"3px",
     width:"40%",
-    height:"20px"
+    height:"20px",
+    fontFamily: "Arial, sans-serif"
   },
   formControl: {
     minWidth: 200,
@@ -172,9 +181,10 @@ export default function IndividualAddProject({ project }) {
 
   const [template, setTemplate] = useState([]);
 
-  const handleDelete = () => {
-    console.log("Chip Deleted")
-  }
+  const handleDelete = (chipToDelete) => () => {
+    setState((chips) => chips.filter((chip) => chip !== chipToDelete));
+    console.log("delete")
+  };
   
   return (
     <>
@@ -196,7 +206,7 @@ export default function IndividualAddProject({ project }) {
 
     <Dialog style={{width:"100%"}} onClose={handleClose} aria-labelledby="customized-dialog-title" open={open}>
 
-        <DialogTitle id="customized-dialog-title" style={{paddingLeft:"30px"}} onClose={handleClose}>
+        <DialogTitle id="customized-dialog-title" className={classes.dialogueTitle} onClose={handleClose}>
           {project.title}
         </DialogTitle>
 
@@ -218,7 +228,7 @@ export default function IndividualAddProject({ project }) {
                   <p className={classes.inputTitle}>Description</p>
                   <textarea 
                     className={classes.textArea} 
-                    placeholder="Enter project name"/>
+                    placeholder="Enter Description"/>
                   </div>) : "" }
             </div>
 
@@ -240,19 +250,21 @@ export default function IndividualAddProject({ project }) {
                   <FormControl variant="outlined" className={classes.formControl}>
                     <Select
                       native
+                      //onChange={newHashtag}
                       onChange={((e) => {setState(state => [...state,e.target.value])})}
+                      //addHashtag(arrayOfHashtags => [...arrayOfHashtags,event.target.value])
                       className={classes.input}
                     >
-                      <option aria-label="None" value="" />
                       {dummy.map(dum => (
-                        <option value={dum.item} key={dum.key}>{dum.item}</option>
+                        <option  value={dum.item} key={dum.key}>{dum.item}</option>
                       ))}
                     </Select>
                   </FormControl>
                   <section className={classes.chipSection}>
-                    
-                    {state.map(sta=>(
-                      <Chip label={sta} onDelete={handleDelete} color="primary" variant="outlined" style={{marginRight:"10px", marginBottom:"5px"}} />
+                    {state.map((h,index)=>(
+                      
+                        <Chip key={index} label={h} onDelete={handleDelete(h)}  color="primary" variant="outlined" style={{marginRight:"10px", marginBottom:"5px"}} />
+                      
                     ))} 
                   
                   </section> 
@@ -276,7 +288,7 @@ export default function IndividualAddProject({ project }) {
                       }}
                       className={classes.input}
                     >
-                      <option aria-label="None" value="" />
+                      
                       {dummy.map(dum => (
                         <option value={dum.item} key={dum.key}>{dum.item}</option>
                       ))}
