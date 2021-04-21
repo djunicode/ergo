@@ -1,7 +1,15 @@
+// To run this test particularly => npm run test test/interfaceCreateProject
 const { expect } = require("chai");
-const createProject = require("../app/electron/createProject");
+const interfaceCreateProject = require("../app/electron/interfaceCreateProject");
 
-let location = "C:\\Users\\Accounts\\AppData\\Roaming\\ergo"
+let location ='';
+if(process.platform === 'linux')
+{
+  location = '/home/ubuntu/.config/ergo'
+}else if(process.platform === 'win32')
+{
+  location = "C:\\Users\\Accounts\\AppData\\Roaming\\ergo"
+}
 
 describe("Create a folder of the Project", () => {
   it("Should create appropriate files and folder for a Node Project", async() => {
@@ -10,7 +18,7 @@ describe("Create a folder of the Project", () => {
       type : "node"
     }
     try {
-      let result = await createProject(project1 , location)
+      let result = await interfaceCreateProject(project1 , location)
       expect(result).to.have.property("success");
       expect(result.success).to.equal(true);
     } catch (error) {
@@ -25,7 +33,7 @@ describe("Create a folder of the Project", () => {
       type : "django"
     }
     try {
-      let result = await createProject(project2 , location)
+      let result = await interfaceCreateProject(project2 , location)
       expect(result).to.have.property("success");
       expect(result.success).to.equal(true);
     } catch (error) {

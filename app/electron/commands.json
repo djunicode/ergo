@@ -13,7 +13,7 @@
   },
   {
     "key": "django",
-    "value": "python -m django --version"
+    "value": "django-admin --version"
   },
   {
     "key": "conda",
