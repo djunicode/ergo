@@ -1,9 +1,27 @@
-const { MakeFileRequest } = require("./events");
-const newFile = require("./newFile");
+const log = require("electron-log");
+const {
+  OpenTerminalWithCommand,
+  LaunchDefaultEditor,
+  CreateProject,
+  OpenTerminalWithCommandReply,
+  LaunchDefaultEditorReply,
+  CreateProjectReply,
+} = require("./events");
+// const launcher = require("./launcher");
+const createProj = require("./interfaceCreateProject");
+const { openTerm } = require("../platform");
 
-const validSendChannels = [MakeFileRequest];
-const validReceiveChannels = [MakeFileRequest];
-const { log } = console;
+const validSendChannels = [
+  OpenTerminalWithCommand,
+  LaunchDefaultEditor,
+  CreateProject,
+];
+const validReceiveChannels = [
+  OpenTerminalWithCommandReply,
+  LaunchDefaultEditorReply,
+  CreateProjectReply,
+];
+
 const debug = true;
 
 // THis is in front end
@@ -12,16 +30,14 @@ const debug = true;
 // and if valid, only then passes on to backend
 exports.preloadBindings = (ipcRenderer /* fs */) => {
   return {
-    send: (channel, filename) => {
+    send: (channel, info) => {
       if (validSendChannels.includes(channel)) {
         switch (channel) {
-          case MakeFileRequest:
-            if (debug) {
-              log(`requesting to make file '${filename}'`);
-            }
-
+          case OpenTerminalWithCommand:
+          case CreateProject:
+          case LaunchDefaultEditor:
             ipcRenderer.send(channel, {
-              filename,
+              info,
             });
             break;
           default:
@@ -34,11 +50,13 @@ exports.preloadBindings = (ipcRenderer /* fs */) => {
     onReceive: (channel, func) => {
       if (validReceiveChannels.includes(channel)) {
         // Deliberately strip event as it includes "sender"
-        ipcRenderer.on(channel, (/* event, */ args) => {
+        ipcRenderer.on(channel, (event, args) => {
           if (debug) {
             switch (channel) {
-              case MakeFileRequest:
-                log(`received file name '${args.filename}'`);
+              case OpenTerminalWithCommandReply:
+              case LaunchDefaultEditorReply:
+              case CreateProjectReply:
+                func(args);
                 break;
               default:
                 break;
@@ -61,18 +79,77 @@ exports.preloadBindings = (ipcRenderer /* fs */) => {
   };
 };
 
-// This is in backend
-// The logs will appear in console where npm run dev is done
-// this checks if channel are valid as well and takes actual actions
 exports.mainBindings = (ipcMain /* , browserWindow, fs, mpc */) => {
-  ipcMain.on(MakeFileRequest, (/* IpcMainEvent, */ args) => {
-    if (debug) {
-      log(
-        `received a request to read store in electron main process.${JSON.stringify(
-          args
-        )}`
-      );
-      newFile(args.filename);
+  ipcMain.on(OpenTerminalWithCommand, (event, args) => {
+    // if (debug) {
+    //   log(
+    //     `received a request to open term in electron main process.
+    //     ${JSON.stringify(
+    //       args
+    //     )}`
+    //   );
+    // }
+    const params = args.info.openterm;
+    if (params != null) {
+      if (params.type !== null && params.type !== undefined) {
+        openTerm(params.arrCommand, params.type)
+          .then(() => {
+            event.sender.send(OpenTerminalWithCommandReply, {
+              openterm: {
+                msg: "Terminal is now open",
+                status: 0,
+              },
+            });
+          })
+          .catch((err) =>
+            event.sender.send(OpenTerminalWithCommandReply, {
+              openterm: {
+                msg: err,
+                status: 1,
+              },
+            })
+          );
+      } else {
+        openTerm(params.arrCommand)
+          .then(() => {
+            event.sender.send(OpenTerminalWithCommandReply, {
+              openterm: {
+                msg: "Terminal is now open",
+                status: 0,
+              },
+            });
+          })
+          .catch((err) =>
+            event.sender.send(OpenTerminalWithCommandReply, {
+              openterm: {
+                msg: err,
+                status: 1,
+              },
+            })
+          );
+      }
     }
+  });
+  ipcMain.on(CreateProject, (event, args) => {
+    const { project, location } = args.info.createproject;
+    createProj(project, location)
+      .then(() => {
+        log.info(`created a new project at ${location}`);
+        event.sender.send(CreateProjectReply, {
+          createproject: {
+            msg: "PROJECT CREATED",
+            status: 0,
+          },
+        });
+      })
+      .catch((err) => {
+        log.error(`couldn't create project at ${location}`);
+        event.sender.send(CreateProjectReply, {
+          openterm: {
+            msg: err,
+            status: 1,
+          },
+        });
+      });
   });
 };
