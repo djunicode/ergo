@@ -1,6 +1,6 @@
 // To run this test particularly => npm run test test/interfaceCreateProject
 const { expect } = require("chai");
-const interfaceCreateProject = require("../app/electron/interfaceCreateProject");
+const interfaceCreateProject = require("../app/electron/events/interfaceCreateProject");
 
 let location ='';
 if(process.platform === 'linux')

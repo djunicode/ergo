@@ -1,5 +1,5 @@
 const { app } = require("electron");
-const createProject = require("./createProject");
+const createProject = require("../createProject");
 
 // Examples
 /*
