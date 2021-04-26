@@ -12,6 +12,7 @@
         "node": true
       },
       "rules": {
+        "react/prop-types": "off",
         "no-param-reassign":"off",
         "global-require":"warn",
         "import/no-extraneous-dependencies": ["error", {"devDependencies": true, "optionalDependencies": false, "peerDependencies": false}],

@@ -1,5 +1,6 @@
 const { Menu } = require("electron");
 const i18nBackend = require("i18next-electron-fs-backend");
+const { shell } = require("electron");
 const whitelist = require("../localization/whitelist");
 
 const isMac = process.platform === "darwin";
@@ -195,7 +196,6 @@ const MenuBuilder = (mainWindow, appName) => {
           {
             label: "Learn More",
             click: async () => {
-              const { shell } = require("electron");
               await shell.openExternal("https://electronjs.org");
             },
           },

@@ -1,0 +1,38 @@
+[ 
+  {
+    "key": "java",
+    "value": "java  -version"
+  },
+  {
+    "key": "node",
+    "value": "node -v"
+  },
+  {
+    "key": "python",
+    "value": "py --version"
+  },
+  {
+    "key": "django",
+    "value": "django-admin --version"
+  },
+  {
+    "key": "conda",
+    "value": "conda -V"
+  },
+  {
+    "key": "c",
+    "value": "gcc --version"
+  },
+  {
+    "key": "php",
+    "value": "php -v"
+  },
+  {
+    "key": "npm",
+    "value": "npm -v"
+  },
+  {
+    "key": "jupyter-notebook",
+    "value": "jupyter-notebook --version"
+  }
+]    
