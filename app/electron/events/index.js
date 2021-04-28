@@ -74,14 +74,6 @@ exports.preloadBindings = (ipcRenderer /* fs */) => {
 
 exports.mainBindings = (ipcMain /* , browserWindow, fs, mpc */) => {
   ipcMain.on(OpenTerminalWithCommand, (event, args) => {
-    // if (debug) {
-    //   log(
-    //     `received a request to open term in electron main process.
-    //     ${JSON.stringify(
-    //       args
-    //     )}`
-    //   );
-    // }
     const params = args.info.openterm;
     if (params != null) {
       if (params.type !== null && params.type !== undefined) {
