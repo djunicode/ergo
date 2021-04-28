@@ -1,6 +1,6 @@
 const { expect } = require("chai");
-const { launchCodeEdiitor } = require("../app/electron/launcher");
-const { launchFileManager } = require("../app/electron/launcher");
+const { launchCodeEdiitor } = require("../app/electron/events/launcher");
+const { launchFileManager } = require("../app/electron/events/launcher");
 
 describe("Launch given code editor", () => {
   it("Should launch the given code editor at the desired location", async () => {

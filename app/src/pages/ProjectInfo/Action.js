@@ -136,6 +136,52 @@ function Action({ shown, isOdd, collapseHandler, index }) {
           </IconButton>
         </Grid>
         <Grid item xs={2}>
+          {/* onClick={() => {
+              window.api.api.send("Launch File Manager", {
+                launchmanager: {
+                  path: "/home/adi28/Desktop/ergo",
+                },
+              });
+              window.api.api.onReceive("Launch File Manager Reply", (args) =>
+                console.log(args.launchmanager.msg, args.launchmanager.status)
+              );
+            }} */}
+          {/* onClick={() => {
+              window.api.api.send("Launch Default Editor", {
+                launcheditor: {
+                  preferredEdittor: "VSCode",
+                  path: "/home/adi28/Desktop/ergo",
+                },
+              });
+              window.api.api.onReceive("Launch Default Editor Reply", (args) =>
+                console.log(args.launcheditor.msg, args.launcheditor.status)
+              );
+            }} */}
+          {/* onClick = () => {
+            window.api.api.send("Open Terminal with Command", {
+                openterm: {
+                  arrCommand: ["echo", "Hi"],
+                  type: "" //optional and not required
+                },
+              });
+              window.api.api.onReceive("Open Terminal with Command Reply",
+              (args) => console.log(args.openterm.msg,args.openterm.status));
+              0 is ok and 1 is error
+            } */}
+          {/* onClick={() => {
+              window.api.api.send("Create Project", {
+                createproject: {
+                  project: {
+                    name: "HELLO",
+                    type: "node",
+                  },
+                },
+              });
+              window.api.api.onReceive("Create Project Reply", (args) =>
+                console.log(args.createproject.msg, args.createproject.status)
+              );
+              0 is ok and 1 is error
+            }} */}
           <Button className={classes.run}>
             <img className={classes.playIcon} src={play} alt="play" />
             {runText}
