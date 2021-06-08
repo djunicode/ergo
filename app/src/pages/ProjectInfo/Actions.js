@@ -29,20 +29,70 @@ function Actions() {
   const actionClickHandler = (index) => {
     setClickedIndex(index);
   };
+
+  const objs = [
+    {
+      title: "Open Terminal",
+      info: "Open Terminal in Current Project Directory",
+      onClick: () => {
+        window.api.api.send("Open Terminal with Command", {
+          openterm: {
+            arrCommand: ["echo", "Hi"],
+            type: "", //optional and not required
+          },
+        });
+        window.api.api.onReceive("Open Terminal with Command Reply", (args) =>
+          console.log(args.openterm.msg, args.openterm.status)
+        );
+      },
+    },
+    {
+      title: "Open File Editor",
+      info: "Open Project in Current File Explorer",
+      onClick: () => {
+        window.api.api.send("Launch File Manager", {
+          launchmanager: {
+            path: "C:\\Users\\shahj\\Desktop",
+          },
+        });
+        window.api.api.onReceive("Launch File Manager Reply", (args) =>
+          console.log(args.launchmanager.msg, args.launchmanager.status)
+        );
+      },
+    },
+    {
+      title: "Open Code Editor",
+      info: "Open Project in Code Editor",
+      onClick: () => {
+        window.api.api.send("Launch Default Editor", {
+          launcheditor: {
+            preferredEdittor: "VSCode",
+            path: "C:\\Users\\shahj\\Desktop",
+          },
+        });
+        window.api.api.onReceive("Launch Default Editor Reply", (args) =>
+          console.log(args.launcheditor.msg, args.launcheditor.status)
+        );
+      },
+    },
+  ];
   return (
     <div className={classes.actionsPane}>
       <h3 className={classes.title}>Actions</h3>
       <hr className={classes.underline} />
-      {[1, 2, 3, 4].map((obj, index) => {
+      {objs.map((obj, index) => {
         const shouldShow = clickedIndex === index;
         const isOdd = index % 2 === 0;
         return (
           <Action
-            key={obj}
+            key={index}
             index={index}
             isOdd={isOdd}
             collapseHandler={actionClickHandler}
             shown={shouldShow}
+            title={obj.title}
+            info={obj.info}
+            onClick={obj.onClick}
           />
         );
       })}
