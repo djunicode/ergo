@@ -2,9 +2,9 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 const CspHtmlWebpackPlugin = require("csp-html-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const { merge } = require("webpack-merge");
-const base = require("./webpack.config");
 const path = require("path");
 const nonce = require("./create-nonce")();
+const base = require("./webpack.config");
 
 module.exports = merge(base, {
   mode: "development",

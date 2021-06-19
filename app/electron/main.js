@@ -5,47 +5,118 @@ const {
   session,
   ipcMain,
   Menu,
+  dialog,
 } = require("electron");
 const {
   default: installExtension,
   REDUX_DEVTOOLS,
   REACT_DEVELOPER_TOOLS,
 } = require("electron-devtools-installer");
-const i18nextBackend = require("i18next-electron-fs-backend");
+const {
+  mainBindings,
+  clearMainBindings,
+} = require("i18next-electron-fs-backend");
 const Store = require("secure-electron-store").default;
 const ContextMenu = require("secure-electron-context-menu").default;
-const path = require("path");
+const { parse, join } = require("path");
 const fs = require("fs");
-const Protocol = require("./protocol");
+const log = require("electron-log");
+const electronDebug = require("electron-debug");
+const events = require("./events");
+const { scheme, requestHandler } = require("./protocol");
 const MenuBuilder = require("./menu");
+// To check inbuilt programs are installed or not
+
+const initialisationFunction = require("./initial");
+// const interfaceCreateProject = require("./interfaceCreateProject");
 
 const isDev = process.env.NODE_ENV === "development";
 const port = 40992; // Hardcoded; needs to match webpack.development.js and package.json
 const selfHost = `http://localhost:${port}`;
+// Setup file logging
 
+log.transports.file.level = "info";
+log.transports.file = "logger.log";
+const logFile = "logger.log";
+
+function archiveLog(file) {
+  file = file.toString();
+  const info = parse(file);
+
+  try {
+    fs.renameSync(file, join(info.dir, `${info.name}.old${info.ext}`));
+  } catch (e) {
+    log.info("Could not rotate log", e);
+  }
+}
+
+initialisationFunction();
+/*
+// Example of project creation
+let project1 = {
+  name: "hello1",
+  type: "node",
+};
+// Returns Promise
+let result = interfaceCreateProject(project1);
+let project2 = {
+  name: "mysite1",
+  type: "django",
+};
+result = interfaceCreateProject(project2);
+*/
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let win;
 let menuBuilder;
+const dateOb = new Date();
+
+const date = `0${dateOb.getDate()}`.slice(-2);
 
 async function createWindow() {
   if (isDev) {
-    await installExtension([REDUX_DEVTOOLS, REACT_DEVELOPER_TOOLS]);
-    /*  !TODO LOG
-      .then((name) => console.log(`Added Extension:  ${name}`))
-      .catch((err) => console.log("An error occurred: ", err));
-    */
+    await installExtension([REDUX_DEVTOOLS, REACT_DEVELOPER_TOOLS])
+      .then((name) => log.info(`Added Extension:  ${name}`))
+      .catch(
+        log.catchErrors({
+          showDialog: true,
+          onError(error, versions, submitIssue) {
+            dialog
+              .showMessageBox({
+                title: "An error occurred",
+                message: error.message,
+                detail: error.stack,
+                type: "error",
+                buttons: ["Ignore", "Report", "Exit"],
+              })
+              .then((result) => {
+                if (result.response === 1) {
+                  archiveLog(logFile);
+                  submitIssue("https://github.com/djunicode/ergo/issues/new", {
+                    title: `Error report for ${versions.app}`,
+                    body:
+                      `Error:\n\`\`\`${error.stack}\n\`\`\`\n` +
+                      `OS: ${versions.os}` +
+                      `Date:${date}`,
+                  });
+                  return;
+                }
+                if (result.response === 2) {
+                  app.quit();
+                }
+              });
+          },
+        })
+      );
   } else {
     // Needs to happen before creating/loading the browser window;
     // not necessarily instead of extensions, just using this code block
     // so I don't have to write another 'if' statement
-    protocol.registerBufferProtocol(Protocol.scheme, Protocol.requestHandler);
+    protocol.registerBufferProtocol(scheme, requestHandler);
   }
-
   const store = new Store({
     path: app.getPath("userData"),
   });
-
   // Use saved config values for configuring your
   // BrowserWindow, for instance.
   // NOTE - this config is not passcode protected
@@ -65,21 +136,22 @@ async function createWindow() {
       contextIsolation: true,
       enableRemoteModule: false,
       additionalArguments: [`storePath:${app.getPath("userData")}`],
-      preload: path.join(__dirname, "preload.js"),
+      preload: join(__dirname, "preload.js"),
     },
   });
 
   // Sets up main.js bindings for our i18next backend
-  i18nextBackend.mainBindings(ipcMain, win, fs);
+  mainBindings(ipcMain, win, fs);
 
   // Sets up main.js bindings for our electron store;
   // callback is optional and allows you to use store in main process
-  const callback = (/* success, initialStore */) => {
-    /* !TODO LOG
-    console.log(
+  const callback = function callback(success, initialStore) {
+    log.info(
       `${!success ? "Un-s" : "S"}uccessfully retrieved store in main process.`
     );
-    console.log(initialStore); // {"key1": "value1", ... }
+    log.info(initialStore);
+    /* {"key1": "value1", ... }
+    Storing the initial store in the main process
     */
   };
 
@@ -100,12 +172,12 @@ async function createWindow() {
       },
     ],
   });
-
+  events.mainBindings(ipcMain, win, fs, callback);
   // Load app
   if (isDev) {
     win.loadURL(selfHost);
   } else {
-    win.loadURL(`${Protocol.scheme}://rse/index-prod.html`);
+    win.loadURL(`${scheme}://rse/index-prod.html`);
   }
 
   // Only do these things when in development
@@ -114,7 +186,7 @@ async function createWindow() {
     // before the DOM is ready
     win.webContents.once("dom-ready", () => {
       // win.webContents.openDevTools(); // see https://github.com/reZach/secure-electron-template/issues/48
-      require("electron-debug")(); // https://github.com/sindresorhus/electron-debug
+      electronDebug(); // https://github.com/sindresorhus/electron-debug
     });
   }
 
@@ -137,12 +209,36 @@ async function createWindow() {
       if (allowedPermissions.includes(permission)) {
         permCallback(true); // Approve permission request
       } else {
-        /* !TODO LOG
-        console.error(
-          `The application tried to request permission for '${permission}'.
-          This permission was not whitelisted and has been blocked.`
-        );
-        */
+        log.catchErrors({
+          showDialog: false,
+          onError(error, versions, submitIssue) {
+            dialog
+              .showMessageBox({
+                title: "An error occurred",
+                message: `The application tried to request permission for '${permission}' This permission was not whitelisted and has been blocked.`,
+                detail: error.stack,
+                type: "error",
+                buttons: ["Ignore", "Report", "Exit"],
+              })
+              .then((result) => {
+                if (result.response === 1) {
+                  submitIssue("https://github.com/djunicode/ergo/issues/new", {
+                    title: `Permission issue for ${versions.app}`,
+                    body:
+                      `Error:\n\`\`\`${error.stack}\n\`\`\`\n` +
+                      `OS: ${versions.os}` +
+                      `Date:${date}`,
+                  });
+                  return;
+                }
+
+                if (result.response === 2) {
+                  app.quit();
+                }
+              });
+          },
+        });
+
         permCallback(false); // Deny
       }
     });
@@ -168,7 +264,7 @@ async function createWindow() {
 // https://electronjs.org/docs/api/protocol#protocolregisterschemesasprivilegedcustomschemes
 protocol.registerSchemesAsPrivileged([
   {
-    scheme: Protocol.scheme,
+    scheme: scheme,
     privileges: {
       standard: true,
       secure: true,
@@ -188,7 +284,7 @@ app.on("window-all-closed", () => {
   if (process.platform !== "darwin") {
     app.quit();
   } else {
-    i18nextBackend.clearMainBindings(ipcMain);
+    clearMainBindings(ipcMain);
     ContextMenu.clearMainBindings(ipcMain);
   }
 });
@@ -210,13 +306,9 @@ app.on("web-contents-created", (event, contents) => {
     // Log and prevent the app from navigating to a new page if
     // that page's origin is not whitelisted
     if (!validOrigins.includes(parsedUrl.origin)) {
-      /* !TODO LOG
-      console.error(
-    `The application tried to redirect to the following address: '${parsedUrl}'.
-    This origin is not whitelisted and the attempt to navigate was blocked.`
+      log.error(
+        `The application tried to redirect to the following address: '${parsedUrl}'. This origin is not whitelisted and the attempt to navigate was blocked.`
       );
-        */
-      contentsEvent.preventDefault();
     }
   });
 
@@ -226,15 +318,11 @@ app.on("web-contents-created", (event, contents) => {
 
     // Log and prevent the app from redirecting to a new page
     if (!validOrigins.includes(parsedUrl.origin)) {
-      /* !TODO LOG
-      console.error(
-    `The application tried to redirect to the following address:
-    '${navigationUrl}'.
-      This attempt was blocked.`
+      log.error(
+        `The application tried to redirect to the following address: '${navigationUrl}'. This attempt was blocked.`
       );
-      */
-      contentsEvent.preventDefault();
     }
+    contentsEvent.preventDefault();
   });
 
   // https://electronjs.org/docs/tutorial/security#11-verify-webview-options-before-creation
@@ -249,18 +337,15 @@ app.on("web-contents-created", (event, contents) => {
   });
 
   // https://electronjs.org/docs/tutorial/security#13-disable-or-limit-creation-of-new-windows
-  contents.on("new-window", (contentsEvent /* navigationUrl */) => {
+  contents.on("new-window", (contentsEvent, navigationUrl) => {
     // Log and prevent opening up a new window
-    /* !TODO LOG
-    console.error(
-      `The application tried to open a new window at the following address:
-       '${navigationUrl}'. This attempt was blocked.`
+
+    log.error(
+      `The application tried to open a new window at the following address: '${navigationUrl}'. This attempt was blocked.`
     );
-      */
     contentsEvent.preventDefault();
   });
 });
-
 // Filter loading any module via remote;
 // you shouldn't be using remote at all, though
 // https://electronjs.org/docs/tutorial/security#16-filter-the-remote-module
@@ -272,15 +357,12 @@ app.on("remote-require", (event) => {
 app.on("remote-get-builtin", (event) => {
   event.preventDefault();
 });
-
 app.on("remote-get-global", (event) => {
   event.preventDefault();
 });
-
 app.on("remote-get-current-window", (event) => {
   event.preventDefault();
 });
-
 app.on("remote-get-current-web-contents", (event) => {
   event.preventDefault();
 });
