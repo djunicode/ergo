@@ -147,11 +147,14 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: "2.7rem",
   },
   button: {
-    fontSize: "1.2rem",
-    padding: "10px",
-    border: "1px solid #FFA47A",
-    borderRadius: "4px",
-    backgroundColor: "#fff",
+    "fontSize": "1.2rem",
+    "padding": "10px",
+    "border": "1px solid #FFA47A",
+    "borderRadius": "4px",
+    "backgroundColor": "#fff",
+    "&:hover": {
+      backgroundColor: "#FFA47A",
+    },
   },
 
   submit: {
