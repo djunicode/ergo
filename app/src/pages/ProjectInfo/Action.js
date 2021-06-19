@@ -7,7 +7,7 @@ import {
   useMediaQuery,
   Collapse,
 } from "@material-ui/core";
-import info from "../../icons/info.svg";
+import infoImg from "../../icons/info.svg";
 import edit from "../../icons/edit.svg";
 import play from "../../icons/run.svg";
 
@@ -97,14 +97,12 @@ const useStyles = makeStyles((theme) => {
   };
 });
 
-function Action({ shown, isOdd, collapseHandler, index }) {
+function Action({ shown, isOdd, collapseHandler, index,title,info,onClick }) {
   const classes = useStyles();
   const runText = useMediaQuery("(max-width:50.625rem)") ? "" : "Run Action";
   const actionInfo = shown ? null : (
     <span>
-      Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-      tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
-      veniam
+      {info}
     </span>
   );
   const titleClass = shown ? classes.actionTitleExpanded : classes.actionTitle;
@@ -123,13 +121,13 @@ function Action({ shown, isOdd, collapseHandler, index }) {
       <Grid container>
         <Grid item xs={8} onClick={actionClickHandler}>
           <div className={classes.actionDesc}>
-            <p className={titleClass}>Title of Action</p>
+            <p className={titleClass}>{title}</p>
             {actionInfo}
           </div>
         </Grid>
         <Grid item xs={2}>
           <IconButton className={classes.icons}>
-            <img src={info} alt="info" />
+            <img src={infoImg} alt="info" />
           </IconButton>
           <IconButton className={classes.icons}>
             <img src={edit} alt="info" />
@@ -182,7 +180,7 @@ function Action({ shown, isOdd, collapseHandler, index }) {
               );
               0 is ok and 1 is error
             }} */}
-          <Button className={classes.run}>
+          <Button className={classes.run} onClick={onClick}>
             <img className={classes.playIcon} src={play} alt="play" />
             {runText}
           </Button>
@@ -196,9 +194,7 @@ function Action({ shown, isOdd, collapseHandler, index }) {
               onKeyDown={actionClickHandler}
               // eslint-disable-next-line react/jsx-closing-bracket-location
               className={classes.expandedInfo}>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-              eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-              enim ad minim veniam
+              {info}
             </div>
           </Collapse>
         </Grid>
