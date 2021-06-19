@@ -7,7 +7,6 @@ import Import from "../../icons/Import.png";
 import Template from "../../icons/Template.png";
 import IndividualAddProject from "./IndividualAddProject";
 
-
 const useStyles = makeStyles(() => ({
   Maintitle: {
     marginTop: "1.87rem",
@@ -55,7 +54,7 @@ export default function AddProject() {
 
       <Grid container spacing={3} style={{ marginLeft: "1.87rem" }}>
         {projectCards.map((p) => (
-          <IndividualAddProject project={p} key={p.id}/>
+          <IndividualAddProject project={p} key={p.id} />
         ))}
       </Grid>
     </div>
