@@ -23,13 +23,16 @@ import Chip from "@material-ui/core/Chip";
 import ArrowForwardIosRoundedIcon from "@material-ui/icons/ArrowForwardIosRounded";
 
 const dummy = [
-  { key: "0", item: "" },
-  { key: "1", item: "item 1" },
-  { key: "2", item: "item 2" },
-  { key: "3", item: "item 3" },
-  { key: "4", item: "item 4" },
-  { key: "5", item: "item 5" },
-  { key: "6", item: "item 6" },
+  { key: "0", item: "select" },
+  { key: "1", item: "node" },
+  { key: "2", item: "django" }
+];
+const dummy1 = [
+  { key: "0", item: "select" },
+  { key: "1", item: "Template 1" },
+  { key: "2", item: "Template 2" },
+  { key: "3", item: "Template 3" },
+  
 ];
 
 const useStyles = makeStyles((theme) => ({
@@ -146,6 +149,22 @@ const useStyles = makeStyles((theme) => ({
     marginTop: "-10%",
     marginBottom: "2.7rem",
   },
+  button: {
+    "fontSize": "1.2rem",
+    "padding": "10px",
+    "border": "1px solid #FFA47A",
+    "borderRadius": "4px",
+    "backgroundColor": "#fff",
+    "&:hover": {
+      backgroundColor: "#FFA47A",
+    },
+  },
+
+  submit: {
+    display: "flex",
+    justifyContent: "flex-end",
+    marginTop: "1.2rem",
+  },
 }));
 
 const styles = (theme) => ({
@@ -164,7 +183,20 @@ const styles = (theme) => ({
 export default function IndividualAddProject({ project }) {
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
+  const [template, setTemplate] = useState([]);
+  const [state, setState] = React.useState([]);
+  const [details, setdetails] = useState({
+    name: "",
+    description: "",
+    tags: state,
+    template: template,
+    path: "",
+    stacks: "",
+  });
 
+  // console.log(state);   
+  // console.log(details.name);   
+  
   const handleClickOpen = () => {
     setOpen(true);
   };
@@ -172,8 +204,8 @@ export default function IndividualAddProject({ project }) {
     window.api.api.send("Create Project", {
       createproject: {
         project: {
-          name: "HELLO",
-          type: "node",
+          name: details.name,
+          type: state[0],
         },
       },
     });
@@ -183,9 +215,16 @@ export default function IndividualAddProject({ project }) {
     setOpen(false);
   };
 
-  const [state, setState] = React.useState([]);
-
-  const [template, setTemplate] = useState([]);
+  const submitForm = () => {
+    setdetails({
+      name: "",
+      description: "",
+      tags: [],
+      template: [],
+      path: "",
+      stacks: "",
+    });
+  };
 
   const handleDelete = (chipToDelete) => () => {
     setState((chips) => chips.filter((chip) => chip !== chipToDelete));
@@ -225,7 +264,7 @@ export default function IndividualAddProject({ project }) {
         </DialogTitle>
 
         <DialogContent dividers style={{ padding: "10px" }}>
-          <form className={classes.form}>
+          <form className={classes.form} onSubmit={submitForm}>
             <div>
               <p className={classes.inputName}>
                 {project.id === 3 ? "Template Name" : "Project Name"}
@@ -233,6 +272,7 @@ export default function IndividualAddProject({ project }) {
               <input
                 placeholder="Enter project name"
                 className={classes.inputProject}
+                onChange={(e) => setdetails({ ...details,name: e.target.value })}
               />
             </div>
 
@@ -243,6 +283,9 @@ export default function IndividualAddProject({ project }) {
                   <textarea
                     className={classes.textArea}
                     placeholder="Enter Description"
+                    onChange={(e) =>
+                      setdetails({ ...details,description: e.target.value })
+                    }
                   />
                 </div>
               ) : (
@@ -257,6 +300,7 @@ export default function IndividualAddProject({ project }) {
                   <textarea
                     className={classes.textArea}
                     placeholder="Add Stacks"
+                    onChange={(e) => setdetails({ stacks: e.target.value })}
                   />
                 </div>
               ) : (
@@ -272,7 +316,7 @@ export default function IndividualAddProject({ project }) {
                     native
                     //onChange={newHashtag}
                     onChange={(e) => {
-                      setState((state) => [...state, e.target.value]);
+                      setState((state) => [e.target.value]);
                     }}
                     //addHashtag(arrayOfHashtags => [...arrayOfHashtags,event.target.value])
                     className={classes.input}>
@@ -315,7 +359,7 @@ export default function IndividualAddProject({ project }) {
                         id: "outlined-age-native-simple",
                       }}
                       className={classes.input}>
-                      {dummy.map((dum) => (
+                      {dummy1.map((dum) => (
                         <option value={dum.item} key={dum.key}>
                           {dum.item}
                         </option>
@@ -337,10 +381,14 @@ export default function IndividualAddProject({ project }) {
                     className={classes.templateControl}>
                     <Select
                       native
+                      onChange={(e) => {
+                        setdetails({ path: e.target.value });
+                      }}
                       inputProps={{
                         name: "age",
                         id: "outlined-age-native-simple",
                       }}
+                      onChange
                       className={classes.input}
                       IconComponent={() => (
                         <ArrowForwardIosRoundedIcon />
@@ -351,13 +399,16 @@ export default function IndividualAddProject({ project }) {
                 " "
               )}
             </div>
+            <div className={classes.submit}>
+              <button
+                className={classes.button}
+                onClick={handleClose}
+                type="submit">
+                Save {project.id === 3 ? "Template" : "Project"}
+              </button>
+            </div>
           </form>
         </DialogContent>
-        <DialogActions>
-          <Button autoFocus onClick={handleClose}>
-            Save {project.id === 3 ? "Template" : "Project"}
-          </Button>
-        </DialogActions>
       </Dialog>
     </>
   );
