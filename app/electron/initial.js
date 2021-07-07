@@ -4,7 +4,7 @@ const { app } = require("electron");
 const sh = require("shelljs");
 
 // Path of config.json file : C:\Users\[USER_NAME]\AppData\Roaming\[APP_NAME]
- 
+
 const ElectronStore = require("electron-store");
 
 const log = require("electron-log");
