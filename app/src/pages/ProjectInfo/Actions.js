@@ -52,7 +52,10 @@ function Actions() {
       onClick: () => {
         window.api.api.send("Launch File Manager", {
           launchmanager: {
-            path: "C:\\Users\\shahj\\Desktop",
+            // path: "C:\\Users\\shahj\\Desktop",
+            // Storing in Projects Folder
+            // Might use user path in future
+            path:"",
           },
         });
         window.api.api.onReceive("Launch File Manager Reply", (args) =>
@@ -67,7 +70,10 @@ function Actions() {
         window.api.api.send("Launch Default Editor", {
           launcheditor: {
             preferredEdittor: "VSCode",
-            path: "C:\\Users\\shahj\\Desktop",
+            // path: "C:\\Users\\shahj\\Desktop",
+            // Storing in Projects Folder
+            // Might use user path in future
+            path:"",
           },
         });
         window.api.api.onReceive("Launch Default Editor Reply", (args) =>

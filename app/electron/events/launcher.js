@@ -1,7 +1,17 @@
 /* eslint-disable consistent-return */
 const { exec } = require("child_process");
 
+// Opening to Projects folder
+const { app } = require("electron");
+
 exports.launchCodeEdiitor = (preferredEdittor, path) => {
+  
+  // Default Path to Projects Folder
+  path = app.getPath("userData");
+  path+="/Projects";
+  // To open specific project in later versions
+  // path+=`/Projects/${name_of_project}` 
+
   if (preferredEdittor === "Eclipse") {
     return new Promise((resolve, reject) => {
       exec(`eclipse "${path}"`, (error) => {
@@ -58,6 +68,13 @@ exports.launchCodeEdiitor = (preferredEdittor, path) => {
 };
 
 exports.launchFileManager = (path) => {
+
+  // Default Path to Projects Folder
+  path = app.getPath("userData");
+  path+="/Projects";
+  // To open specific project in later versions
+  // path+=`/Projects/${name_of_project}`
+
   if (process.platform === "linux") {
     return new Promise((resolve, reject) => {
       exec(`xdg-open "${path}"`, (error) => {
